@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+    <title>Form Validator tests</title>
+    <script src="http://yui.yahooapis.com/3.5.0/build/yui/yui-min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script> 
+    <script src="jquery.uvalidator.js" type="text/javascript" charset="utf-8"></script>
+    <script src="jquery.uvalidator.rules.js" type="text/javascript" charset="utf-8"></script>
+    <script src="jquery.uvalidator.test.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        $(function () {
+            $('form').uvalidator()
+        })
+    </script>
+    <style type="text/css">
+        input,
+        button,
+        select {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 3px;
+        }
+        .valid {
+            border-color: green;
+            box-shadow: 0 0 2px green;
+        }
+        .invalid {
+            border-color: red;
+            box-shadow: 0 0 2px red;
+        }
+    </style>
+</head>
+<body>
+    <form action="index_submit" method="get" accept-charset="utf-8">
+        <p>
+            <label for="first">First</label><br />
+            <input type="text" name="foo" value="" id="first" required />
+            <input type="text" name="fooNotRequired" value="" id="fooNotRequired" />
+        </p>
+        <p>
+            <input type="radio" name="bar" value="" data-validator-group="group1" id="radio-1" required /><label for="radio-1">Radio 1</label>
+            <input type="radio" name="bar" value="" data-validator-group="group1" id="radio-2" required /><label for="radio-2">Radio 2</label>
+        </p>
+        <p>
+            <input type="radio" name="baz" value="" data-validator-group="radio-group-2" id="radio-3" /><label for="radio-1">Radio 3</label>
+            <input type="radio" name="baz" value="" data-validator-group="radio-group-2" id="radio-4" /><label for="radio-2">Radio 4</label>
+        </p>
+        <p>
+            <label for="startDateYear">Year</label><br />
+            <input type="text" name="startDateYear" value="" data-validator-group="start-date" data-validator-type="date" id="startDateYear" required /><br />
+            <label for="startDateMonth">Month</label><br />
+            <input type="text" name="startDateMonth" value="" data-validator-group="start-date" data-validator-type="date" id="startDateMonth" required />
+        </p>
+        <p>
+            <label for="startDateYearNotRequired">Year</label><br />
+            <input type="text" name="startDateYearNotRequired" value="" data-validator-group="start-date-2" data-validator-type="date" id="startDateYearNotRequired" /><br />
+            <label for="startDateMonth">Month</label><br />
+            <input type="text" name="startDateMonthNotRequired" value="" data-validator-group="start-date-2" data-validator-type="date" id="startDateMonthNotRequired" />
+        </p>
+        <p>
+            <select id="selectField" name="elem" required>
+                <option value="">Select one please</option>
+                <option>foo</option>
+                <option>bar</option>
+            </select>
+        </p>
+        <p><button type="submit" id="SubmitButton">Submit</button></p>
+    </form>
+</body>
+</html>
