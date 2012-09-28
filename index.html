@@ -8,66 +8,76 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script> 
     <script src="jquery.uvalidator.js" type="text/javascript" charset="utf-8"></script>
     <script src="jquery.uvalidator.rules.js" type="text/javascript" charset="utf-8"></script>
+    <script src="jquery.uvalidator.skin.js" type="text/javascript" charset="utf-8"></script>
+    <script src="jquery.uvalidator.skin.base.js" type="text/javascript" charset="utf-8"></script>
+    <script src="jquery.uvalidator.skin.ustream.js" type="text/javascript" charset="utf-8"></script>
     <script src="jquery.uvalidator.test.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript">
         $(function () {
-            $('form').uvalidator()
+            $.uvalidatorApplySkin('ustream', $('form'));
         })
     </script>
     <style type="text/css">
-        input,
-        button,
-        select {
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 3px;
-        }
-        .valid {
-            border-color: green;
-            box-shadow: 0 0 2px green;
-        }
-        .invalid {
-            border-color: red;
-            box-shadow: 0 0 2px red;
-        }
+        @import url(http://twitter.github.com/bootstrap/assets/css/bootstrap.css);
     </style>
 </head>
 <body>
+<div class="container">
     <form action="index_submit" method="get" accept-charset="utf-8">
-        <p>
-            <label for="first">First</label><br />
+        <div class="control-group">
+            <label for="first">First</label>
             <input type="text" name="foo" value="" id="first" required />
+        </div>
+        <div class="control-group">
+            <label for="second">Second</label>
+            <input type="number" name="fooNumber" value="" id="fooNumber" />
+        </div>
+        <div class="control-group">
+            <label for="fooNotRequired">Not required</label>
             <input type="text" name="fooNotRequired" value="" id="fooNotRequired" />
-        </p>
-        <p>
-            <input type="radio" name="bar" value="" data-validator-group="group1" id="radio-1" required /><label for="radio-1">Radio 1</label>
-            <input type="radio" name="bar" value="" data-validator-group="group1" id="radio-2" required /><label for="radio-2">Radio 2</label>
-        </p>
-        <p>
-            <input type="radio" name="baz" value="" data-validator-group="radio-group-2" id="radio-3" /><label for="radio-1">Radio 3</label>
-            <input type="radio" name="baz" value="" data-validator-group="radio-group-2" id="radio-4" /><label for="radio-2">Radio 4</label>
-        </p>
-        <p>
-            <label for="startDateYear">Year</label><br />
-            <input type="text" name="startDateYear" value="" data-validator-group="start-date" data-validator-type="date" id="startDateYear" required /><br />
-            <label for="startDateMonth">Month</label><br />
+        </div>
+        <div class="control-group">
+            <label class="radio">
+                <input type="radio" name="bar" value="" data-validator-group="group1" id="radio-1" required />
+                Radio 1
+            </label>
+            <label class="radio">
+                <input type="radio" name="bar" value="" data-validator-group="group1" id="radio-2" required />
+                Radio 2
+            </label>
+        </div>
+        <div class="control-group">
+            <label class="radio">
+                <input type="radio" name="baz" value="" data-validator-group="radio-group-2" id="radio-3" />
+                Radio 3
+            </label>
+            <label class="radio">
+                <input type="radio" name="baz" value="" data-validator-group="radio-group-2" id="radio-4" />
+                Radio 4
+            </label>
+        </div>
+        <div class="control-group">
+            <label for="startDateYear">Year</label>
+            <input type="text" name="startDateYear" value="" data-validator-group="start-date" data-validator-type="date" id="startDateYear" required />
+            <label for="startDateMonth">Month</label>
             <input type="text" name="startDateMonth" value="" data-validator-group="start-date" data-validator-type="date" id="startDateMonth" required />
-        </p>
-        <p>
-            <label for="startDateYearNotRequired">Year</label><br />
-            <input type="text" name="startDateYearNotRequired" value="" data-validator-group="start-date-2" data-validator-type="date" id="startDateYearNotRequired" /><br />
-            <label for="startDateMonth">Month</label><br />
+        </div>
+        <div class="control-group">
+            <label for="startDateYearNotRequired">Year</label>
+            <input type="text" name="startDateYearNotRequired" value="" data-validator-group="start-date-2" data-validator-type="date" id="startDateYearNotRequired" />
+            <label for="startDateMonthNotRequired">Month</label>
             <input type="text" name="startDateMonthNotRequired" value="" data-validator-group="start-date-2" data-validator-type="date" id="startDateMonthNotRequired" />
-        </p>
-        <p>
+        </div>
+        <div class="control-group">
+            <label for="selectField">Lorem ipsum</label>
             <select id="selectField" name="elem" required>
                 <option value="">Select one please</option>
                 <option>foo</option>
                 <option>bar</option>
             </select>
-        </p>
-        <p><button type="submit" id="SubmitButton">Submit</button></p>
+        </div>
+        <p><button type="submit" id="SubmitButton" class="btn">Submit</button></p>
     </form>
+</div>
 </body>
 </html>

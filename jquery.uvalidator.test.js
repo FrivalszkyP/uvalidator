@@ -9,6 +9,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
         radio4 = '#radio-4',
         field1 = '#first',
         field2 = '#fooNotRequired',
+        field3 = '#fooNumber',
         dateYear = '#startDateYear',
         dateMonth = '#startDateMonth',
         dateYearNotRequired = '#startDateYearNotRequired',
@@ -18,24 +19,31 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 	coreSuite = new Y.Test.Suite({
 		name: 'validator tests',
 		setUp: function () {
-            $('form').uvalidator()
+            $('form').uvalidator();
+            /*
                 .on('formValid', function () {
                 }).on('formInvalid', function () {
                 }).on('fieldValid', function (e) {
-                    $(e.target).addClass('valid').removeClass('invalid');
+                    console.log('field valid', e.target);
+                    $(e.target).addClass('valid').removeClass('invalid')
+                        .closest('.control-group').addClass('success').removeClass('error');
                 }).on('fieldInvalid', function (e) {
-                    $(e.target).addClass('invalid').removeClass('valid');
+                    console.log('field invalid', e.target);
+                    $(e.target).addClass('invalid').removeClass('valid')
+                        .closest('.control-group').addClass('error').removeClass('success');
                 });
+            */
 		},
 		tearDown: function () {
+            $('.control-group').removeClass('success error');
 		}
 	});
 	coreSuite.add(new Y.Test.Case({
 		name: "Required tests",
         setUp: function () {
-            $(':input').removeClass('valid invalid');
+            $(':input').removeClass('valid invalid').val();
             $(':radio').prop('checked', false);
-            $('#first,#fooNotRequired').val('');
+            $('#first,#fooNotRequired,#fooNumber').val('');
             $('#startDateYear,#startDateMonth').val('');
             $('#startDateYearNotRequired,#startDateMonthNotRequired').val('');
             $('#selectField').val('');
@@ -63,6 +71,10 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             Y.Assert.isTrue($(radio4).hasClass('valid'), 'radio-4 has no valid class');
             Y.Assert.isFalse($(radio4).hasClass('invalid'));
             Y.Assert.isFalse($(radio4).hasClass('invalid'));
+        },
+        "check if number field has no invalid class": function () {
+            Y.Assert.isTrue($(field3).hasClass('valid'));
+            Y.Assert.isFalse($(field3).hasClass('invalid'));
         },
 		"check if date fields has invalid class": function () {
             Y.Assert.isTrue($(dateYear).hasClass('invalid'));
@@ -119,6 +131,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             $(':input').removeClass('valid invalid');
             $(field1).val('foo bar baz');
             $(field2).val('foo bar baz');
+            $(field3).val(123);
             $(':radio[required]:first').prop('checked', true);
             $(':radio:not([required]):first').prop('checked', true);
             $(dateYear).val('2012-12-12');
@@ -131,6 +144,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
         tearDown: function () {
             $(field1).val('');
             $(field2).val('');
+            $(field3).val('');
             $(':input').removeClass('valid invalid');
             $(':radio[required]:first').prop('checked', false);
             $(':radio:not([required]):first').prop('checked', false);
@@ -148,6 +162,10 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 		"check if simple, not required input field has valid class": function () {
             Y.Assert.isTrue($(field2).hasClass('valid'));
             Y.Assert.isFalse($(field2).hasClass('invalid'));
+        },
+        "check if not required number field has invalid class": function () {
+            Y.Assert.isTrue($(field3).hasClass('valid'));
+            Y.Assert.isFalse($(field3).hasClass('invalid'));
         },
 		"check if radio fields has no invalid class": function () {
             Y.Assert.isTrue($(radio1).hasClass('valid'));

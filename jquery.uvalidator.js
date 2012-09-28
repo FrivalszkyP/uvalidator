@@ -12,7 +12,46 @@
      * @type Object
      */
     defaults = {
-        groupDataName: 'validator-group'
+        groupDataName: 'validator-group',
+        validationEvents: {
+            /**
+            * Validate on focus out event
+            * @property {Boolean} validationEvents.focusout
+            * @default false
+            */
+            focusout: false,
+            /**
+            * Validate on focus in event
+            * @property {Boolean} validationEvents.focusin
+            * @default false
+            */
+            focusin: false,
+            /**
+            * Validate on change event
+            * @property {Boolean} validationEvents.change
+            * @default true
+            */
+            change: true,
+            /**
+            * Validate on keyup event
+            * @property {Boolean} validationEvents.keyup
+            * @default keyup
+            */
+            keyup: false,
+            /**
+            * Validate on click event
+            * @property {Boolean} validationEvents.click
+            * @default true
+            */
+            click: false,
+            /**
+            * Validate on form submit event
+            * @property {Boolean} validationEvents.submit
+            * @default true
+            */
+            submit: true
+        }
+
     };
     events = {
         FIELD_VALID: 'fieldValid',
@@ -31,6 +70,7 @@
             validatorsByName = {},
             groupValidators = [],
             groupValidatorsByName = {};
+
         return {
             createValidator: function createValidator(selector, name, fn, isGroup) {
                 return {
@@ -108,6 +148,13 @@
         };
     }());
 
+    function getGroupItemsForField(field) {
+        var group, form;
+        group = field.data(defaults.groupDataName);
+        form = field[0].form ? $(field[0].form) : field.closest('form');
+        return form.find('[data-' + defaults.groupDataName + '="' + group + '"]');
+    }
+
     function validateWith(value, field, name, callback) {
         var validator = validatorManager.getValidatorByName(name);
         if (validator) {
@@ -117,102 +164,88 @@
         }
     }
 
-    function validateField(field, callback) {
-        var vl, validator, value, isValid, index;
+    function validateField(field, callback, isGroup) {
+        var vl, value, isValid, index, validated, callbackCalled;
 
         field = $(field);
-        value = field.is(':checkbox,:radio') ? field.is(':checked') : field.val();
-        vl = validatorManager.len();
-
-        isValid = true;
         index = 0;
+        validated = 0;
+        isValid = true;
+        callbackCalled = false;
+        vl = validatorManager.len(isGroup);
+        if (!isGroup) {
+            value = field.is(':checkbox,:radio') ? field.is(':checked') : field.val();
+        }
 
-        function onValidate(isValid) {
+        field.trigger('startFieldValidation', field);
+
+        function onValidate(valid, validator) {
+            if (callbackCalled) {
+                return;
+            }
             index += 1;
-            if (index < vl && isValid) {
+            validated += 1;
+            isValid = isValid && valid;
+            if (validated < vl && isValid) {
                 validate();
             } else {
                 var output = {
                     isValid: isValid,
-                    isGroup: false
+                    isGroup: isGroup
                 };
                 if (!isValid) {
                     output.validator = validator.name;
                     output.field = field;
                 }
+                callbackCalled = true;
+                field.trigger('finishFieldValidation', field);
                 callback(output, field);
             }
         }
 
+        function getOnValidate(validator) {
+            return function (valid) {
+                onValidate(valid, validator);
+            };
+        }
+
         function validate() {
+            var validator;
             while (index < vl && isValid) {
-                validator = validatorManager.getValidatorByIndex(index);
+                validator = validatorManager.getValidatorByIndex(index, isGroup);
                 if (field.is(validator.selector)) {
-                    validator.fn(value, field, onValidate);
+                    validator.fn(value, field, getOnValidate(validator));
                 } else {
-                    index += 1;
-                    if (index >= vl) {
+                    validated += 1;
+                    if (validated >= vl) {
+                        callbackCalled = true;
+                        field.trigger('finishFieldValidation', field);
                         // if not matched any validator then in the end the
                         // index will be eq to vl, so we must call the
                         // callback by hand
                         callback({
                             validator: validator,
-                            isValid: isValid
+                            isValid: isValid,
+                            isGroup: isGroup
                         }, field);
                     }
                 }
+                index += 1;
             }
         }
         validate();
     }
 
-    function validateGroup(items, callback) {
-        var vl, index, isValid, validator;
-
-        vl = validatorManager.len(true);
-        index = 0;
-        isValid = true;
-        items = $(items);
-
-        function onValidate(valid) {
-            index += 1;
-            isValid = valid;
-            if (index < vl && isValid) {
-                validate();
-            } else {
-                var output = {
-                    isValid: isValid,
-                    isGroup: true
-                };
-                if (!isValid) {
-                    output.validator = validator.name;
-                    output.fields = items;
-                }
-                callback(output, items);
-            }
+    function triggerFieldEvents(result, field) {
+        if (result.isValid) {
+            field.trigger(events.FIELD_VALID, result);
+        } else {
+            field.trigger(events.FIELD_INVALID, result);
         }
-
-        function validate() {
-            while (index < vl && isValid) {
-                validator = validatorManager.getValidatorByIndex(index, true);
-                if (items.is(validator.selector)) {
-                    validator.fn(items, onValidate);
-                } else {
-                    index += 1;
-                    if (index >= vl) {
-                        callback({
-                            validator: validator,
-                            isValid: isValid
-                        }, items);
-                    }
-                }
-            }
-        }
-        validate();
     }
 
     function bindDelegation(form, settings) {
-        var fields, groupFields, groups, groupsLen;
+        var fields, groupFields, groups, groupsLen, validationEvents;
 
         form = $(form);
         form.attr('novalidate', 'novalidate');
@@ -220,45 +253,37 @@
         fields = form.find(':input');
 
         groupFields = fields.filter('[data-' + settings.groupDataName + ']');
-        fields = fields.not('[data-' + settings.groupDataName + '],button');
+        fields = fields.not('[data-' + settings.groupDataName + '],:button,:submit');
 
         groups = {};
+        groupsLen = 0;
         groupFields.each(function () {
             var that = $(this), // caching
-                group = that.data('validator-group'),
+                group = that.data(settings.groupDataName),
                 form;
+
             if (!groups[group]) {
-                form = this.form || that.closest('form');
-                groups[group] = $(form)
-                    .find('[data-' + settings.groupDataName + '="' + group + '"]');
+                groups[group] = getGroupItemsForField(that);
                 groupsLen += 1;
             }
         });
-        form
-            .delegate(':input:not(button,[data-' + settings.groupDataName + '])',
-                'change', function (e) {
-                    validateField(e.target, function (result, field) {
-                        if (result.isValid) {
-                            field.trigger(events.FIELD_VALID, result);
-                        } else {
-                            field.trigger(events.FIELD_INVALID, result);
-                        }
+        $.each(settings.validationEvents, function (name, value) {
+            if (value) {
+                form.delegate(':input:not(:button,:submit,[data-' + settings.groupDataName + '])',
+                    name, function (e) {
+                        validateField(e.target, triggerFieldEvents, false);
                     });
-                });
-        form.delegate(':input[data-' + settings.groupDataName + ']', 'change', function (e) {
-            var target = $(e.target),
-                group = target.data(settings.groupDataName),
-                form = e.target.form || target.closest('form');
 
-            validateGroup($(form).find('[data-' + settings.groupDataName + '="' + group + '"]'),
-                function (result, items) {
-                    if (result.isValid) {
-                        items.trigger(events.FIELD_VALID, result, items);
-                    } else {
-                        items.trigger(events.FIELD_INVALID, result, items);
-                    }
-                });
+                form.delegate(':input[data-' + settings.groupDataName + ']', name, function (e) {
+                    var target = $(e.target),
+                        elements;
 
+                    elements = getGroupItemsForField(target);
+
+                    validateField(elements, triggerFieldEvents, true);
+
+                });
+            }
         });
 
         form.submit(function (submitEvent) {
@@ -285,7 +310,7 @@
                 }
 
                 if (validationResults.length >= (fields.length + groupsLen)) {
-
+                    form.trigger('finishFormValidation', form);
                     if (isFormValid) {
                         form.trigger(events.FORM_VALID, {results: validationResults});
                     } else {
@@ -300,24 +325,47 @@
                 }
             }
 
+            form.trigger('startFormValidation', form);
             fields.each(function () {
-                validateField(this, onValidate);
+                validateField(this, onValidate, false);
             });
             $.each(groups, function (group, items) {
-                validateGroup(items, onValidate);
+                validateField(items, onValidate, true);
             });
         });
     }
+
     function UValidator(options) {
         var settings = $.extend({}, defaults, options);
+
         return this.each(function (form) {
             bindDelegation(this, settings);
         });
     }
+
     $.uvalidator = {
         addMethod: validatorManager.addValidatorMethod,
-        addGroupMethod: validatorManager.addValidatorGroupMethod
+        addGroupMethod: validatorManager.addValidatorGroupMethod,
+        events: events,
+        fieldIsValid: function (field, callback, conf) {
+            var isGroup;
+            field = $(field);
+            conf = $.extend({}, defaults, conf);
+            isGroup = field.is('[data-' + conf.groupDataName + ']');
 
+            if (isGroup) {
+                field = getGroupItemsForField(field);
+            }
+
+            validateField(field, callback, isGroup);
+        },
+        validateField: function (field, callback, conf) {
+            $.uvalidator.fieldIsValid(field, function (result, field) {
+                triggerFieldEvents(result, field);
+                callback(result, field);
+            }, conf);
+        }
     };
+
     $.fn.uvalidator = UValidator;
 }(window.jQuery));
