@@ -6,35 +6,12 @@
     <title>Form Validator tests</title>
     <script src="http://yui.yahooapis.com/3.5.0/build/yui/yui-min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script> 
-    <script src="jquery.uvalidator.js" type="text/javascript" charset="utf-8"></script>
-    <script src="jquery.uvalidator.rules.js" type="text/javascript" charset="utf-8"></script>
-    <script src="jquery.uvalidator.skin.js" type="text/javascript" charset="utf-8"></script>
-    <script src="jquery.uvalidator.skin.base.js" type="text/javascript" charset="utf-8"></script>
-    <script src="jquery.uvalidator.skin.ustream.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../jquery.uvalidator.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../jquery.uvalidator.rules.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../jquery.uvalidator.skin.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../jquery.uvalidator.skin.base.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../jquery.uvalidator.skin.ustream.js" type="text/javascript" charset="utf-8"></script>
     <script src="jquery.uvalidator.test.js" type="text/javascript" charset="utf-8"></script>
-    <script type="text/javascript">
-        $(function () {
-            var skin = $.uvalidatorApplySkin("ustream", $("form"));
-            skin.on('formValid', function () {
-                setTimeout(function () {
-                    var results = {};
-                    if ($('form').find('[name="foo"]').val() % 2) {
-                        results.foo = {
-                            text: "Look! This field is invalid"
-                        };
-                    }
-                    if ($('form').find('[name="bar"]:checked').val() === "2") {
-                        results.bar = {
-                            text: "Grrr, it's wrong..."
-                        };
-                    }
-                    if (results.foo || results.bar) {
-                        skin.applyResults(results);
-                    }
-                }, 1000);
-            });
-        })
-    </script>
     <style type="text/css">
         @import url(http://twitter.github.com/bootstrap/assets/css/bootstrap.css);
     </style>

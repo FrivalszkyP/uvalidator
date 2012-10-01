@@ -19,20 +19,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 	coreSuite = new Y.Test.Suite({
 		name: 'validator tests',
 		setUp: function () {
-            $('form').uvalidator();
-            /*
-                .on('formValid', function () {
-                }).on('formInvalid', function () {
-                }).on('fieldValid', function (e) {
-                    console.log('field valid', e.target);
-                    $(e.target).addClass('valid').removeClass('invalid')
-                        .closest('.control-group').addClass('success').removeClass('error');
-                }).on('fieldInvalid', function (e) {
-                    console.log('field invalid', e.target);
-                    $(e.target).addClass('invalid').removeClass('valid')
-                        .closest('.control-group').addClass('error').removeClass('success');
-                });
-            */
+            var skin = $.uvalidatorApplySkin("ustream", $("form"));
 		},
 		tearDown: function () {
             $('.control-group').removeClass('success error');
