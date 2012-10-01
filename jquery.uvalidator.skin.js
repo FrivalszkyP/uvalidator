@@ -3,14 +3,17 @@
 	"use strict";
     var skins = {},
         defaultProto;
+
     function isFunction(func) {
         return typeof func === 'function';
     }
+
     defaultProto = {
         /**
          * @method setForm
          * @property {jQueryObject} form
          * @protected
+         * @chainable
          */
         setForm: function (form) {
             this.form = form;
@@ -27,7 +30,9 @@
                 .on('finishFieldValidation', $.proxy(this.onFieldValidationFinish, this))
                 .on('startFormValidation', $.proxy(this.onFormValidationStart, this))
                 .on('finishFormValidation', $.proxy(this.onFormValidationFinish, this))
+
                 .on('formValid', $.proxy(this.resetResults, this))
+
                 .on('formValid', proxyTrigger)
                 .on('formInvalid', proxyTrigger)
                 .on('fieldInvalid', proxyTrigger)
@@ -42,18 +47,26 @@
         /**
          * @method on
          * @protected
+         * @chainable
          */
         on: function () {
             var that = $(this);
             that.on.apply(that, Array.prototype.slice.call(arguments));
             return this;
         },
+        /**
+         * @method resetResults
+         * @protected
+         * @chainable
+         */
         resetResults: function () {
             this.results = {};
+            return this;
         },
         /**
          * @method applyResults
          * @protected
+         * @chainable
          */
         applyResults: function (results) {
             var form = this.form,
@@ -75,7 +88,12 @@
             this.form.trigger('formInvalid');
 
             this.results = resultsStorage;
+            return this;
         },
+        /**
+         * @method getMessage
+         * @return {String|Null} Message for the error
+         */
         getMessage: function (args) {
             var msg = null;
             if (args.message) {
