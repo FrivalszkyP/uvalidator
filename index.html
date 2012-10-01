@@ -11,10 +11,28 @@
     <script src="jquery.uvalidator.skin.js" type="text/javascript" charset="utf-8"></script>
     <script src="jquery.uvalidator.skin.base.js" type="text/javascript" charset="utf-8"></script>
     <script src="jquery.uvalidator.skin.ustream.js" type="text/javascript" charset="utf-8"></script>
-    <script src="jquery.uvalidator.test.js" type="text/javascript" charset="utf-8"></script>
+    <!-- <script src="jquery.uvalidator.test.js" type="text/javascript" charset="utf-8"></script> -->
     <script type="text/javascript">
         $(function () {
-            $.uvalidatorApplySkin('ustream', $('form'));
+            var skin = $.uvalidatorApplySkin("ustream", $("form"));
+            skin.on('formValid', function () {
+                setTimeout(function () {
+                    var results = {};
+                    if ($('form').find('[name="foo"]').val() % 2) {
+                        results.foo = {
+                            text: "Look! This field is invalid"
+                        };
+                    }
+                    if ($('form').find('[name="bar"]:checked').val() === "2") {
+                        results.bar = {
+                            text: "Grrr, it's wrong..."
+                        };
+                    }
+                    if (results.foo || results.bar) {
+                        skin.applyResults(results);
+                    }
+                }, 1000);
+            });
         })
     </script>
     <style type="text/css">
@@ -38,11 +56,11 @@
         </div>
         <div class="control-group">
             <label class="radio">
-                <input type="radio" name="bar" value="" data-validator-group="group1" id="radio-1" required />
+                <input type="radio" name="bar" value="1" data-validator-group="group1" id="radio-1" required />
                 Radio 1
             </label>
             <label class="radio">
-                <input type="radio" name="bar" value="" data-validator-group="group1" id="radio-2" required />
+                <input type="radio" name="bar" value="2" data-validator-group="group1" id="radio-2" required />
                 Radio 2
             </label>
         </div>
@@ -77,6 +95,7 @@
             </select>
         </div>
         <p><button type="submit" id="SubmitButton" class="btn">Submit</button></p>
+        <p><button type="button" id="ApplyResult" class="btn">apply result</button></p>
     </form>
 </div>
 </body>
