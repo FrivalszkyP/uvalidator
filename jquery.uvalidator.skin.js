@@ -46,6 +46,7 @@
         on: function () {
             var that = $(this);
             that.on.apply(that, Array.prototype.slice.call(arguments));
+            return this;
         },
         resetResults: function () {
             this.results = {};
