@@ -2,18 +2,16 @@
 /*global YUI: true, sinon: true, $: true */
 YUI().use('node', 'test', 'test-console', function (Y) {
 	"use strict";
-	var coreSuite,
-        radio1 = '#radio-1',
-        radio2 = '#radio-2',
+	var form = $('form'),
+		messages = $('#Messages'),
+		coreSuite,
+        radio1 = $('#radio-1'),
+        radio2 = $('#radio-2'),
         radio3 = '#radio-3',
         radio4 = '#radio-4',
-        field1 = '#first',
+        field1 = $('#first'),
         field2 = '#fooNotRequired',
         field3 = '#fooNumber',
-        dateYear = '#startDateYear',
-        dateMonth = '#startDateMonth',
-        dateYearNotRequired = '#startDateYearNotRequired',
-        dateMonthNotRequired = '#startDateMonthNotRequired',
         submitButton = '#SubmitButton';
 
 	coreSuite = new Y.Test.Suite({
@@ -27,10 +25,10 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             server.respondWith('POST', '/submit/form', function (xhr) {
                 var errors = [],
                     response = {};
-                if ($('form').find('[name="foo"]').val() % 2) {
+                if (form.find('[name="foo"]').val() % 2) {
                     errors.push(['foo', "Look! This field is invalid"]);
                 }
-                if ($('form').find('[name="bar"]:checked').val() === "2") {
+                if (form.find('[name="bar"]:checked').val() === "2") {
                     errors.push(['bar', "Grrr, it's wrong..."]);
                 }
                 response.success = errors.length < 1;
@@ -46,15 +44,15 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             });
 
 
-            $('#Messages').hide();
-            skin = $.uvalidatorApplySkin("ustream", $("form"));
+            messages.hide();
+            skin = $.uvalidatorApplySkin("ustream", form);
             skin.on('formValid', function () {
                 $.ajax({
                     type: 'post',
                     url: '/submit/form',
                     success: function (response) {
                         if (response.success) {
-                            $("#Messages")
+                            messages
                                 .show()
                                 .text('Form submitted')
                                 .addClass('alert-success')
@@ -76,14 +74,14 @@ YUI().use('node', 'test', 'test-console', function (Y) {
                 }, 5000);
                 */
             }).on('formInvalid', function () {
-                $("#Messages")
+                messages
                     .show()
                     .text('Form is invalid :(')
                     .removeClass('alert-success')
                     .addClass('alert-error');
 
             }).on('formValid', function () {
-                $("#Messages")
+                messages
                     .show()
                     .text('Form submitted')
                     .addClass('alert-success')
@@ -103,12 +101,8 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 			$(':radio').prop('checked', false);
 			$('#first,#fooNotRequired,#fooNumber').val('');
 			$('#startDateYear,#startDateMonth').val('');
-			$('#startDateYearNotRequired,#startDateMonthNotRequired').val('');
-			$('#selectField').val('');
-			$(field1).val('123');
-			$(radio2).prop('checked', true);
-			$(dateMonth).val(12);
-			$(dateYear).val(12);
+			field1.val('123');
+			radio2.prop('checked', true);
 		},
 		tearDown: function () {
 			$(':input').removeClass('valid invalid');
@@ -123,7 +117,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 					radioError;
 
 				Y.Assert.isTrue(controlGroups.length === 2, 'control group number not 2');
-				field1Error = $(field1).closest('.control-group').find('.uerror');
+				field1Error = field1.closest('.control-group').find('.uerror');
 				Y.Assert.isTrue(field1Error.length === 1, 'Uerror not found');
 				Y.Assert.areSame('Look! This field is invalid', field1Error.text());
 				radioError = $(controlGroups[1]).find('.uerror');
@@ -133,7 +127,8 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 		"Test if field1 valid on server too": function () {
 			var controlGroups,
 				radioError;
-			$(field1).val(12).change();
+
+			field1.val(12).change();
 			controlGroups = $('.control-group.error');
 			Y.Assert.isTrue(controlGroups.length === 1, 'control group number not 1');
 			radioError = controlGroups.find('.uerror');
@@ -141,7 +136,8 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 		},
 		"Test if radio is valid on server too": function () {
 			var controlGroups;
-			$(radio1).prop('checked', true).change();
+
+			radio1.prop('checked', true).change();
 			controlGroups = $('.control-group.error');
 			Y.Assert.isTrue(controlGroups.length === 0, 'control group number not 0');
 			this.wait(function () {
