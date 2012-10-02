@@ -76,6 +76,8 @@
     $.uvalidatorSkin.addMessages([
         ['required', 'The field is required'],
         ['number', 'Type a valid number, please'],
-        ['ajax', 'Ajax validator said, you fucked up everyting']
+        ['userpassword', 'Password must contain at least 7 characters including at' +
+            ' least 1 capitalized letter AND at least 1 number.'],
+        ['passwordverify', 'Password must be the same as above.']
     ]);
 }(window.jQuery));
