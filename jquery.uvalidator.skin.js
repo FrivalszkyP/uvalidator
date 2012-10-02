@@ -9,6 +9,10 @@
         return typeof func === 'function';
     }
 
+    function toArray(thing) {
+        return Array.prototype.slice.call(thing);
+    }
+
     defaultProto = {
         /**
          * @method setForm
@@ -52,7 +56,7 @@
          */
         on: function () {
             var that = $(this);
-            that.on.apply(that, Array.prototype.slice.call(arguments));
+            that.on.apply(that, toArray(arguments));
             return this;
         },
         /**
@@ -133,7 +137,12 @@
             skin;
         Skin.prototype = proto;
         skin = new Skin();
-        skin.superclass = defaultProto;
+        skin.superclass = {};
+        $.each(defaultProto, function (key, val) {
+            skin.superclass[key] = function () {
+                return val.apply(skin, toArray(arguments));
+            };
+        });
         skins[name] = skin;
     }
     function applySkin(skin, form) {
