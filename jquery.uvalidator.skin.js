@@ -2,6 +2,7 @@
 (function ($) {
 	"use strict";
     var skins = {},
+        messages = {},
         defaultProto;
 
     function isFunction(func) {
@@ -98,6 +99,11 @@
             var msg = null;
             if (args.message) {
                 msg = args.message;
+            } else {
+                msg = messages[args.validator];
+                if (isFunction(msg)) {
+                    msg = msg(args);
+                }
             }
             return msg;
         },
@@ -135,4 +141,28 @@
     }
     $.uvalidatorSkin = createSkin;
     $.uvalidatorApplySkin = applySkin;
+    /**
+     * @method addMessage
+     * @param {String} validator The name of the validator.
+     * @param {String,Function} message The error message or a function which
+     * should return the error message
+     */
+    $.uvalidatorSkin.addMessage = function (validator, message) {
+        messages[validator] = message;
+    };
+    /**
+     * @method addMessages
+     * @param {Array} customMessages Array of custom messages. Every item in
+     * the array should be an array, where the first element is the name of the
+     * validator, the second element must be the error message or a function
+     * which will return the error message. If it's a function a validation
+     * result object will be passed to it
+     */
+    $.uvalidatorSkin.addMessages = function (customMessages) {
+        var ml, i, msg;
+        for (i = 0, ml = customMessages.length; i < ml; i += 1) {
+            msg = customMessages[i];
+            messages[msg[0]] = msg[1];
+        }
+    };
 }(window.jQuery));

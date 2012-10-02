@@ -2,26 +2,6 @@
 (function ($) {
     "use strict";
     $.uvalidatorSkin('ustream', {
-        getMessage: function (args) {
-            var msg = this.superclass.getMessage(args);
-            if (!msg) {
-                msg = 'An error occured';
-                if (args && args.validator) {
-                    switch (args.validator) {
-                    case 'required':
-                        msg = 'The field is required';
-                        break;
-                    case 'number':
-                        msg = 'Type a valid number, please';
-                        break;
-                    case 'ajax':
-                        msg = 'Ajax validator said, you fucked up everyting';
-                        break;
-                    }
-                }
-            }
-            return msg;
-        },
         findNextInvalid: function () {
             return this.form.find('.control-group.error :input:first');
         },
@@ -85,4 +65,9 @@
             $(field).closest('.control-group').removeClass('info');
         }
     });
+    $.uvalidatorSkin.addMessages([
+        ['required', 'The field is required'],
+        ['number', 'Type a valid number, please'],
+        ['ajax', 'Ajax validator said, you fucked up everyting']
+    ]);
 }(window.jQuery));

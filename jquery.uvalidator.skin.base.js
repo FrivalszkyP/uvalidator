@@ -2,20 +2,6 @@
 (function ($) {
     "use strict";
     $.uvalidatorSkin('base', {
-        getMessage: function (args) {
-            var msg = this.superclass.getMessage(args);
-            if (!msg) {
-                msg = 'An error occured';
-                if (args && args.validator) {
-                    switch (args.validator) {
-                    case 'required':
-                        msg = 'The field is required';
-                        break;
-                    }
-                }
-            }
-            return msg;
-        },
         setFieldInvalid: function (field, args) {
             $(field).addClass('invalid').removeClass('valid')
                 .closest('.control-group').addClass('error').removeClass('success');
