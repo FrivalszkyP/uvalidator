@@ -46,6 +46,11 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 
             messages.hide();
             skin = $.uvalidatorApplySkin("ustream", form);
+			$('#HideAllErrors').click(function () {
+				console.log('hid eall errors', skin);
+				
+				skin.hideAllError();
+			});
             skin.on('formValid', function () {
                 $.ajax({
                     type: 'post',
@@ -58,7 +63,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
                                 .addClass('alert-success')
                                 .removeClass('alert-error');
                         } else {
-                            skin.applyResults(response.formFields);
+                            skin.applyErrors(response.formFields);
                         }
                     },
                     error: function (arg) {

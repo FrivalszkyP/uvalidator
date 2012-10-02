@@ -69,11 +69,22 @@
             return this;
         },
         /**
-         * @method applyResults
+         * Applies a custom error set on the form fields.
+         * @method applyErrors
+         * @param {Object} results The result set which contains the field
+         * names and the error message
+         * {
+         *  fieldName1: {
+         *      text: "Error message"
+         *  },
+         *  fieldName2: {
+         *      text: "Error message2"
+         *  }
+         * }
          * @protected
          * @chainable
          */
-        applyResults: function (results) {
+        applyErrors: function (results) {
             var form = this.form,
                 resultsStorage = {};
 
@@ -111,11 +122,12 @@
             }
             return msg;
         },
-        showFieldError: function () {},
-        setFieldInvalid: function () {},
-        setFieldValid: function () {},
-        hideFieldError: function () {},
-        hideAllError: function () {},
+        hideAllError: function () {
+            $(':input').each($.proxy(function (index, field) {
+                this.setFieldValid(field);
+                this.hideFieldError(field);
+            }, this));
+        },
         onFieldValid: function (fieldValidEvent, args) {
             this.setFieldValid(fieldValidEvent.target, args);
             this.hideFieldError(fieldValidEvent.target, args);
@@ -124,6 +136,10 @@
             this.setFieldInvalid(fieldInvalidEvent.target, args);
             this.showFieldError(fieldInvalidEvent.target, args);
         },
+        showFieldError: function () {},
+        setFieldInvalid: function () {},
+        setFieldValid: function () {},
+        hideFieldError: function () {},
         onFieldValidationStart: function () {},
         onFieldValidationFinish: function () {},
         onFormValidationStart: function () {},
