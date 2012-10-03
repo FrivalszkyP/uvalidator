@@ -109,6 +109,52 @@
         }
     );
     $.uvalidator.addMethod(
+        '.input-min,[min]',
+        'min',
+        function (value, element, callback) {
+            var min,
+                valid;
+
+            value = +value;
+            min = element.attr('data-validator-min');
+
+            if (!min) {
+                min = element.attr('min');
+            }
+            min = +min;
+
+            if (isNaN(min) || isNaN(value)) {
+                callback(false);
+                return;
+            }
+            valid = isOptional(element, value) || value >= min;
+            callback(valid);
+        }
+    );
+    $.uvalidator.addMethod(
+        '.input-max,[max]',
+        'max',
+        function (value, element, callback) {
+            var max,
+                valid;
+
+            value = +value;
+            max = element.attr('data-validator-max');
+
+            if (!max) {
+                max = element.attr('max');
+            }
+            max = +max;
+
+            if (isNaN(max) || isNaN(value)) {
+                callback(false);
+                return;
+            }
+            valid = isOptional(element, value) || value <= max;
+            callback(valid);
+        }
+    );
+    $.uvalidator.addMethod(
         '.creditcard,.input-creditcard',
         'creditcard',
         function (value, element, callback) {
@@ -142,4 +188,22 @@
         }
     );
 
+    $.uvalidator.addMethod(
+        '.pattern,.input-pattern,[pattern]',
+        'pattern',
+        function (value, element, callback) {
+            var valid, pattern, regex;
+
+            pattern = element.attr('data-validator-pattern') || element.attr('pattern');
+
+            if (!pattern) {
+                callback(false);
+            }
+
+            regex = new RegExp(pattern);
+            valid = regex.test(value);
+
+            callback(valid);
+        }
+    );
 }(window.jQuery));
