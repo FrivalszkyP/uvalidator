@@ -7,7 +7,11 @@ YUI().use('node', 'test', 'test-console', function (Y) {
         pass2 = $('#pass2'),
         url = $('#url'),
         email = $('#email'),
-        creditcard = $('#creditcard');
+        creditcard = $('#creditcard'),
+        min = $('#min'),
+        max = $('#max'),
+        minMax = $('#min-max'),
+        pattern = $('#pattern');
 
 	coreSuite = new Y.Test.Suite({
 		name: 'validator tests',
@@ -150,7 +154,127 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             Y.Assert.isTrue(creditcard.hasClass('valid'));
 		}
 	}));
+	coreSuite.add(new Y.Test.Case({
+		name: "Min number test",
+        setUp: function () {
+            $('#Messages').hide();
+            min.val('');
+            $('form').submit();
+        },
+        tearDown: function () {
+            min.val('');
+            $(':input').removeClass('valid invalid');
+        },
+        "invalid format in min": function () {
+            min.val('aaa').change();
+            Y.Assert.isFalse(min.hasClass('valid'));
+		},
+        "minimum pass tests": function () {
+            min.attr('data-validator-min', 5);
+            min.val('4').change();
+            Y.Assert.isFalse(min.hasClass('valid'), 'minimum is 5 value is 4');
+            min.attr('data-validator-min', -5);
+            min.val('-6').change();
+            Y.Assert.isFalse(min.hasClass('valid'), 'minimum is -5 value is -6');
+        },
+        "valid minimum values": function () {
+            min.attr('data-validator-min', -5);
+            min.val('-4').change();
+            Y.Assert.isTrue(min.hasClass('valid'), 'minimum is -5 value is -4');
+            min.val('-5').change();
+            Y.Assert.isTrue(min.hasClass('valid'), 'minimum is -5 value is -5');
+
+            min.attr('data-validator-min', 0);
+            min.val('0').change();
+            Y.Assert.isTrue(min.hasClass('valid'), 'minimum is 0 value is 0');
+            min.val('0.1').change();
+            Y.Assert.isTrue(min.hasClass('valid'), 'minimum is 0 value is 0.1');
+		}
+	}));
+	coreSuite.add(new Y.Test.Case({
+		name: "Max number test",
+        setUp: function () {
+            $('#Messages').hide();
+            max.val('');
+            $('form').submit();
+        },
+        tearDown: function () {
+            max.val('');
+            $(':input').removeClass('valid invalid');
+        },
+        "invalid format in max": function () {
+            max.val('aaa').change();
+            Y.Assert.isFalse(max.hasClass('valid'));
+		},
+        "invalid maximum number tests": function () {
+            max.attr('data-validator-max', 5);
+            max.val('6').change();
+            Y.Assert.isFalse(max.hasClass('valid'), 'maximum is 5 value is 6');
+            max.attr('data-validator-max', -5);
+            max.val('-4').change();
+            Y.Assert.isFalse(max.hasClass('valid'), 'maximum is -5 value is -4');
+        },
+        "valid maximum values": function () {
+            max.attr('data-validator-max', -5);
+            max.val('-6').change();
+            Y.Assert.isTrue(max.hasClass('valid'), 'maximum is -5 value is -6');
+            max.val('-5').change();
+            Y.Assert.isTrue(max.hasClass('valid'), 'maximum is -5 value is -5');
+
+            max.attr('data-validator-max', 0);
+            max.val('0').change();
+            Y.Assert.isTrue(max.hasClass('valid'), 'maximum is 0 value is 0');
+
+            max.attr('data-validator-max', 1);
+            max.val('0.1').change();
+            Y.Assert.isTrue(max.hasClass('valid'), 'maximum is 1 value is 0.1');
+		}
+	}));
+	coreSuite.add(new Y.Test.Case({
+		name: "Min/Max number test",
+        setUp: function () {
+            $('#Messages').hide();
+            minMax.val('');
+            $('form').submit();
+        },
+        tearDown: function () {
+            minMax.val('');
+            $(':input').removeClass('valid invalid');
+        },
+        "invalid number in min-max": function () {
+            minMax.attr('data-validator-min', 1);
+            minMax.attr('data-validator-max', 5);
+            minMax.val(0).change();
+            Y.Assert.isFalse(minMax.hasClass('valid'));
+            minMax.val(6).change();
+            Y.Assert.isFalse(minMax.hasClass('valid'));
+        },
+        "valid number in min-max": function () {
+            minMax.val(3).change();
+            Y.Assert.isTrue(minMax.hasClass('valid'));
+		}
+	}));
+	coreSuite.add(new Y.Test.Case({
+		name: "Pattern tests",
+        setUp: function () {
+            $('#Messages').hide();
+            minMax.val('');
+            pattern.attr('data-validator-pattern', '^[0-9]+$');
+            $('form').submit();
+        },
+        tearDown: function () {
+            minMax.val('');
+            $(':input').removeClass('valid invalid');
+        },
+        "invalid value test": function () {
+            pattern.val('asdf9').change();
+            Y.Assert.isFalse(minMax.hasClass('valid'));
+        },
+        "valid value test": function () {
+            pattern.val('9').change();
+            Y.Assert.isTrue(pattern.hasClass('valid'));
+        }
+	}));
 	Y.Test.Runner.add(coreSuite);
 	Y.Test.Runner.run();
 });
-

@@ -34,6 +34,22 @@
             <input type="text" name="creditcard" value="" id="creditcard" class="input-creditcard" />
         </div>
         <div class="control-group">
+            <label for="min">min</label>
+            <input type="text" name="min" value="" id="min" class="input-min" data-validator-min="5" />
+        </div>
+        <div class="control-group">
+            <label for="max">max</label>
+            <input type="text" name="max" value="" id="max" class="input-max" data-validator-max="5" />
+        </div>
+        <div class="control-group">
+            <label for="min-max">min-max</label>
+            <input type="text" name="min-max" value="" id="min-max" class="input-max input-min" data-validator-max="5" data-validator-min="1" />
+        </div>
+        <div class="control-group">
+            <label for="pattern">pattern</label>
+            <input type="text" name="pattern" value="" id="pattern" class="pattern" data-validator-pattern="^[0-9]$" />
+        </div>
+        <div class="control-group">
             <label for="pass">Password</label>
             <input type="password" name="pass" value="" id="pass" class="userpassword" required />
         </div>
