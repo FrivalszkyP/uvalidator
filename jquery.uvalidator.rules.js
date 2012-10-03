@@ -5,7 +5,6 @@
 
     patterns = {
         userpassword: /(?=.{7,})(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])/,
-        phone: /([\+][0-9]{1,3}([ \.\-])?)?([\(]{1}[0-9]{3}[\)])?([0-9A-Z \.\-]{1,32})((x|ext|extension)?[0-9]{1,4}?)/,
 
         // Shamelessly lifted from Scott Gonzalez via the Bassistance
         // Validation plugin
@@ -19,9 +18,6 @@
         // Number, including positive, negative, and floating decimal.
         // Credit: bassistance
         // number: /-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?/,
-
-        // Date in ISO format. Credit: bassistance
-        dateISO: /\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}/,
 
         alpha: /[a-zA-Z]+/,
         alphaNumeric: /\w+/
@@ -72,8 +68,7 @@
         '.number,[type="number"]',
         'number',
         function (value, element, callback) {
-            var valid = isOptional(element, value) || isNaN(+value);
-
+            var valid = isOptional(element, value) || !isNaN(+value);
             callback(valid);
         }
     );
