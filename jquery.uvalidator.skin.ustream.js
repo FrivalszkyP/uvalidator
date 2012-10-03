@@ -74,10 +74,11 @@
         }
     });
     $.uvalidatorSkin.addMessages([
-        ['required', 'The field is required'],
-        ['number', 'Type a valid number, please'],
+        ['required', 'The field is required.'],
+        ['number', 'Type a number, please.'],
         ['userpassword', 'Password must contain at least 7 characters including at' +
             ' least 1 capitalized letter AND at least 1 number.'],
-        ['passwordverify', 'Password must be the same as above.']
+        ['passwordverify', 'Password must be the same as above.'],
+        ['url', 'Please type a valid url.']
     ]);
 }(window.jQuery));

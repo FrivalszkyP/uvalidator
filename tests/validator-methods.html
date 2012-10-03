@@ -22,12 +22,24 @@
     <div class="alert" id="Messages"></div>
     <form action="index_submit" method="get" accept-charset="utf-8">
         <div class="control-group">
+            <label for="url">url</label>
+            <input type="text" name="url" value="" id="url" class="input-url" />
+        </div>
+        <div class="control-group">
+            <label for="email">email</label>
+            <input type="text" name="email" value="" id="email" class="input-email" />
+        </div>
+        <div class="control-group">
+            <label for="creditcard">creditcard</label>
+            <input type="text" name="creditcard" value="" id="creditcard" class="input-creditcard" />
+        </div>
+        <div class="control-group">
             <label for="pass">Password</label>
             <input type="password" name="pass" value="" id="pass" class="userpassword" required />
         </div>
         <div class="control-group">
             <label for="pass2">Password</label>
-            <input type="password" name="pass2" value="" id="pass2" data-validator-refelem="#pass" class="passwordVerify" required />
+            <input type="password" name="pass2" value="" id="pass2" data-validator-refelem="#pass" class="password-verify" required />
         </div>
         <p><button type="submit" id="SubmitButton" class="btn">Submit</button></p>
     </form>
