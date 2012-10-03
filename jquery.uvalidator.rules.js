@@ -108,5 +108,38 @@
             callback(valid);
         }
     );
+    $.uvalidator.addMethod(
+        '.creditcard,.input-creditcard',
+        'creditcard',
+        function (value, element, callback) {
+            var valid, nCheck, nDigit, bEven, n, cDigit;
+
+            if (!/^[0-9 \-]+$/.test(value)) {
+                callback(false);
+                return;
+            }
+
+            nCheck = 0;
+            nDigit = 0;
+            bEven = false;
+
+            value = value.replace(/\D/g, "");
+
+            for (n = value.length - 1; n >= 0; n -= 1) {
+                cDigit = value.charAt(n);
+                nDigit = parseInt(cDigit, 10);
+                if (bEven) {
+                    if ((nDigit *= 2) > 9) {
+                        nDigit -= 9;
+                    }
+                }
+                nCheck += nDigit;
+                bEven = !bEven;
+            }
+
+            valid = (nCheck % 10) === 0;
+            callback(valid);
+        }
+    );
 
 }(window.jQuery));
