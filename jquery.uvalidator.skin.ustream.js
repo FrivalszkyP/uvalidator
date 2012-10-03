@@ -2,6 +2,16 @@
 (function ($) {
     "use strict";
     $.uvalidatorSkin('ustream', {
+        setForm: function (form) {
+            this.superclass.setForm(form);
+            this.form.delegate(':input', 'focus', $.proxy(function (focusEvent) {
+                $(focusEvent.target).closest('.control-group').addClass('focused');
+            }, this));
+            this.form.delegate(':input', 'blur', $.proxy(function (focusEvent) {
+                $(focusEvent.target).closest('.control-group').removeClass('focused');
+            }, this));
+            return this;
+        },
         findNextInvalid: function () {
             return this.form.find('.control-group.error :input:first');
         },
@@ -22,25 +32,33 @@
             $(field).addClass('valid').removeClass('invalid info')
                 .closest('.control-group').addClass('success').removeClass('error info');
         },
-        showFieldError: function (field, args) {
+        addFieldError: function (field, args) {
             var msg = this.getMessage(args),
                 container,
                 errorElem;
 
             field = $(field);
             container = field.closest('.control-group');
-            container.find('.uerror').remove();
+            errorElem = container.find('.uerror');
 
+            if (errorElem.length < 1) {
+                errorElem = $('<label />')
+                    .attr('for', field.attr('id'))
+                    .addClass('uerror')
+                    .appendTo(container);
+            }
+            /*
             if (this.isErrorMessageShown()) {
                 if (this.isFirstErrorMessageShown()) {
                     return;
                 }
-                this.form.find('.uerror').remove();
+                //this.form.find('.uerror').remove();
             }
-            $('<label />')
-                .attr('for', field.attr('id'))
-                .addClass('uerror')
-                .html(msg).appendTo(container);
+            */
+            errorElem.html(msg);
+        },
+        showFieldError: function (field, args) {
+            this.addFieldError(field, args);
         },
         showNextError: function (fieldValidEvent, args) {
             var nextInvalid = this.findNextInvalid(),
@@ -71,6 +89,9 @@
         },
         onFieldValidationFinish: function (field) {
             $(field).closest('.control-group').removeClass('info');
+        },
+        onFormInvalid: function () {
+            this.form.find(':input.invalid:first').focus();
         }
     });
     $.uvalidatorSkin.addMessages([
@@ -79,6 +100,17 @@
         ['userpassword', 'Password must contain at least 7 characters including at' +
             ' least 1 capitalized letter AND at least 1 number.'],
         ['passwordverify', 'Password must be the same as above.'],
-        ['url', 'Please type a valid url.']
+        ['creditcard', 'Invalid credit card number.'],
+        ['url', 'Please type a valid url.'],
+        ['email', 'Please type a valid email address.'],
+        ['min', function (args) {
+            var minVal = args.field.attr('data-validation-min') || args.field.attr('min');
+            return 'The minimum value is ' + minVal + '.';
+        }],
+        ['max', function (args) {
+            var maxVal = args.field.attr('data-validation-max') || args.field.attr('max');
+            return 'The maximum value is ' + maxVal + '.';
+        }],
+        ['pattern', 'Invalid format.']
     ]);
 }(window.jQuery));

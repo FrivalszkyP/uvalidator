@@ -47,8 +47,6 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             messages.hide();
             skin = $.uvalidatorApplySkin("ustream", form);
 			$('#HideAllErrors').click(function () {
-				console.log('hid eall errors', skin);
-				
 				skin.hideAllError();
 			});
             skin.on('formValid', function () {
@@ -67,7 +65,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
                         }
                     },
                     error: function (arg) {
-                        console.log('error', arguments);
+                        // console.log('error', arguments);
                     }
                 });
                 server.respond();
@@ -92,6 +90,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
                     .addClass('alert-success')
                     .removeClass('alert-error');
             });
+			
 		},
 		tearDown: function () {
             // $('.control-group').removeClass('success error');
@@ -113,7 +112,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 			$(':input').removeClass('valid invalid');
 			$('#.control-group').removeClass('error success');
 		},
-		"Test invalid fields found": function () {
+		"Test invalid fields": function () {
 			$('form').submit();
 			this.wait(function () {
 
@@ -126,7 +125,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 				Y.Assert.isTrue(field1Error.length === 1, 'Uerror not found');
 				Y.Assert.areSame('Look! This field is invalid', field1Error.text());
 				radioError = $(controlGroups[1]).find('.uerror');
-				Y.Assert.isTrue(radioError.length === 0, 'Uerror found');
+				Y.Assert.isTrue(radioError.length === 1, 'Uerror not found');
 			}, 100);
 		},
 		"Test if field1 valid on server too": function () {
