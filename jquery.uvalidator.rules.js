@@ -98,7 +98,7 @@
         }
     );
     $.uvalidator.addMethod(
-        '.passwordVerify',
+        '.password-verify,.input-password-verify',
         'passwordverify',
         function (value, element, callback) {
             var refElement = element.data('validator-refelem'),
