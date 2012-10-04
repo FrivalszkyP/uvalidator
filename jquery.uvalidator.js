@@ -367,13 +367,6 @@
                 triggerFieldEvents(result, field);
                 callback(result, field);
             }, conf);
-        },
-        validateWith: function (field, method, callback) {
-            var isGroup = field.is('[data-validator-group]');
-            validateWith(getFieldValue(field), field, method, function (isValid) {
-                callback({
-                });
-            });
         }
     };
 
