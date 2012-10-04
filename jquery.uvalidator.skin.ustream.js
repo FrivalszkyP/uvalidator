@@ -60,27 +60,8 @@
         showFieldError: function (field, args) {
             this.addFieldError(field, args);
         },
-        showNextError: function (fieldValidEvent, args) {
-            var nextInvalid = this.findNextInvalid(),
-                nextName;
-
-            if (nextInvalid.length > 0 && !this.isErrorMessageShown()) {
-                if (this.results) {
-                    nextName = nextInvalid.attr('name');
-                }
-                if (nextName) {
-                    this.showFieldError(nextInvalid, this.results[nextName]);
-                } else {
-                    $.uvalidator.validateField(nextInvalid, function () {});
-                }
-            }
-        },
         hideFieldError: function (field, args) {
             $(field).closest('.control-group').find('.uerror').remove();
-        },
-        onFieldValid: function (fieldValidEvent, args) {
-            this.superclass.onFieldValid(fieldValidEvent, args);
-            this.showNextError(fieldValidEvent, args);
         },
         onFieldValidationStart: function (event, field) {
             $(field).removeClass('valid invalid')

@@ -29,7 +29,6 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 		setUp: function () {
             $('form').uvalidator()
                 .on('fieldInvalid', $.proxy(function () {
-                    console.log('field invalid', arguments[1].field);
                     spies.fieldInvalid();
                 }, this))
                 .on('fieldValid', $.proxy(function () {
