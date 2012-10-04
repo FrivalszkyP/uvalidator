@@ -29,7 +29,7 @@
         dbg = function () {};
     }
 
-    $.uvalidator.addMethod('[required],.required', 'required', function (value, element, callback) {
+    $.uvalidator.addMethod('.required,[required]', 'required', function (value, element, callback) {
         callback(!!value);
     });
     $.uvalidator.addMethod('.ajax', 'ajax', function (value, element, callback) {
