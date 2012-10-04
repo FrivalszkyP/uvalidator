@@ -12,7 +12,6 @@
      * @type Object
      */
     defaults = {
-        groupDataName: 'validator-group',
         validationEvents: {
             /**
             * Validate on focus out event
@@ -148,17 +147,21 @@
         };
     }());
 
+    function getFieldValue(field) {
+        return field.is(':checkbox,:radio') ? field.is(':checked') : field.val();
+    }
+
     function getGroupItemsForField(field) {
         var group, form;
-        group = field.data(defaults.groupDataName);
+        group = field.attr('data-validator-group');
         form = field[0].form ? $(field[0].form) : field.closest('form');
-        return form.find('[data-' + defaults.groupDataName + '="' + group + '"]');
+        return form.find('[data-validator-group="' + group + '"]');
     }
 
     function validateWith(value, field, name, callback) {
         var validator = validatorManager.getValidatorByName(name);
         if (validator) {
-            validator(value, field, callback);
+            validator.fn(value, field, callback);
         } else {
             callback(true);
         }
@@ -174,7 +177,7 @@
         callbackCalled = false;
         vl = validatorManager.len(isGroup);
         if (!isGroup) {
-            value = field.is(':checkbox,:radio') ? field.is(':checked') : field.val();
+            value = getFieldValue(field);
         }
 
         field.trigger('startFieldValidation', field);
@@ -252,14 +255,14 @@
 
         fields = form.find(':input');
 
-        groupFields = fields.filter('[data-' + settings.groupDataName + ']');
-        fields = fields.not('[data-' + settings.groupDataName + '],:button,:submit');
+        groupFields = fields.filter('[data-validator-group]');
+        fields = fields.not('[data-validator-group],:button,:submit');
 
         groups = {};
         groupsLen = 0;
         groupFields.each(function () {
             var that = $(this), // caching
-                group = that.data(settings.groupDataName),
+                group = that.attr('data-validator-group'),
                 form;
 
             if (!groups[group]) {
@@ -269,12 +272,12 @@
         });
         $.each(settings.validationEvents, function (name, value) {
             if (value) {
-                form.delegate(':input:not(:button,:submit,[data-' + settings.groupDataName + '])',
+                form.delegate(':input:not(:button,:submit,[data-validator-group])',
                     name, function (e) {
                         validateField(e.target, triggerFieldEvents, false);
                     });
 
-                form.delegate(':input[data-' + settings.groupDataName + ']', name, function (e) {
+                form.delegate(':input[data-validator-group]', name, function (e) {
                     var target = $(e.target),
                         elements;
 
@@ -351,7 +354,7 @@
             var isGroup;
             field = $(field);
             conf = $.extend({}, defaults, conf);
-            isGroup = field.is('[data-' + conf.groupDataName + ']');
+            isGroup = field.is('[data-validator-group]');
 
             if (isGroup) {
                 field = getGroupItemsForField(field);
