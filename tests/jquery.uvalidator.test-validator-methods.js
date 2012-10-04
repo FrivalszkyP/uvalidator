@@ -3,6 +3,9 @@
 YUI().use('node', 'test', 'test-console', function (Y) {
 	"use strict";
 	var coreSuite,
+        required = $('#required'),
+        radio1 = $('#radio-1'),
+        radio2 = $('#radio-2'),
         pass = $('#pass'),
         pass2 = $('#pass2'),
         url = $('#url'),
@@ -13,15 +16,73 @@ YUI().use('node', 'test', 'test-console', function (Y) {
         minMax = $('#min-max'),
         pattern = $('#pattern');
 
+    Y.Assert.uFieldIsInvallid = function uFieldIsVallid(field) {
+        Y.Assert.isTrue(field.hasClass('invalid'), 'uField is invalid');
+        Y.Assert.isFalse(field.hasClass('valid'), 'uField is invalid');
+    };
+    Y.Assert.uFieldIsVallid = function uFieldIsVallid(field) {
+        Y.Assert.isTrue(field.hasClass('valid'), 'uField is valid');
+        Y.Assert.isFalse(field.hasClass('invalid'), 'uField is valid');
+    };
+    function setUp() {
+    }
+    function tearDown() {
+        // $(':input').removeClass('valid invalid');
+        // $('.uerror').remove();
+        required.val('');
+        pass.val('');
+        pass2.val('');
+        url.val('');
+        email.val('');
+        creditcard.val('');
+        min.val('');
+        max.val('');
+        minMax.val('');
+        pattern.val('');
+    }
+
 	coreSuite = new Y.Test.Suite({
 		name: 'validator tests',
 		setUp: function () {
             var skin = $.uvalidatorApplySkin("ustream", $("form"));
 		},
-		tearDown: function () {
-            $('.control-group').removeClass('success error');
-		}
+		tearDown: tearDown
 	});
+	coreSuite.add(new Y.Test.Case({
+		name: "Required tests",
+        setUp: function () {
+            $('#Messages').hide();
+            $('form').submit();
+        },
+        tearDown: tearDown,
+        "required field invalid states": function () {
+            required.val('').change();
+            Y.Assert.uFieldIsInvallid(required);
+        },
+        "required field valid states": function () {
+            required.val('a').change();
+            Y.Assert.uFieldIsVallid(required);
+        }
+	}));
+	coreSuite.add(new Y.Test.Case({
+		name: "Required group tests",
+        setUp: function () {
+            $('#Messages').hide();
+            $('form').submit();
+        },
+        tearDown: tearDown,
+        "required group invalid states": function () {
+            radio1.prop('checked', false);
+            radio2.prop('checked', false).change();
+            Y.Assert.uFieldIsInvallid(radio1);
+            Y.Assert.uFieldIsInvallid(radio2);
+        },
+        "required field valid states": function () {
+            radio2.prop('checked', true).change();
+            Y.Assert.uFieldIsVallid(radio1);
+            Y.Assert.uFieldIsVallid(radio2);
+        }
+	}));
 	coreSuite.add(new Y.Test.Case({
 		name: "Password format tests",
         setUp: function () {
@@ -30,9 +91,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             pass2.val('');
             $('form').submit();
         },
-        tearDown: function () {
-            $(':input').removeClass('valid invalid');
-        },
+        tearDown: tearDown,
         "lowercase letters only": function () {
             pass.val('foobarbaz').change();
             Y.Assert.isTrue(pass.hasClass('invalid'));
@@ -70,11 +129,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             pass2.val('');
             $('form').submit();
         },
-        tearDown: function () {
-            pass.val('');
-            pass2.val('');
-            $(':input').removeClass('valid invalid');
-        },
+        tearDown: tearDown,
         "passwords does not match": function () {
             pass.val('F1fooabar').change();
             pass2.val('F1fooaba').change();
@@ -95,10 +150,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             url.val('');
             $('form').submit();
         },
-        tearDown: function () {
-            url.val('');
-            $(':input').removeClass('valid invalid');
-        },
+        tearDown: tearDown,
         "without http": function () {
             url.val('www.ustream.tv').change();
             Y.Assert.isFalse(url.hasClass('valid'));
@@ -115,10 +167,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             email.val('');
             $('form').submit();
         },
-        tearDown: function () {
-            email.val('');
-            $(':input').removeClass('valid invalid');
-        },
+        tearDown: tearDown,
         "invalid email formats": function () {
             email.val('foo').change();
             Y.Assert.isFalse(email.hasClass('valid'));
@@ -139,10 +188,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             creditcard.val('');
             $('form').submit();
         },
-        tearDown: function () {
-            creditcard.val('');
-            $(':input').removeClass('valid invalid');
-        },
+        tearDown: tearDown,
         "invalid creditcard formats": function () {
             creditcard.val('5555#5555#5555#4444').change();
             Y.Assert.isFalse(creditcard.hasClass('valid'), 'Disallowed characters');
@@ -161,10 +207,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             min.val('');
             $('form').submit();
         },
-        tearDown: function () {
-            min.val('');
-            $(':input').removeClass('valid invalid');
-        },
+        tearDown: tearDown,
         "invalid format in min": function () {
             min.val('aaa').change();
             Y.Assert.isFalse(min.hasClass('valid'));
@@ -198,10 +241,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             max.val('');
             $('form').submit();
         },
-        tearDown: function () {
-            max.val('');
-            $(':input').removeClass('valid invalid');
-        },
+        tearDown: tearDown,
         "invalid format in max": function () {
             max.val('aaa').change();
             Y.Assert.isFalse(max.hasClass('valid'));
@@ -237,10 +277,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             minMax.val('');
             $('form').submit();
         },
-        tearDown: function () {
-            minMax.val('');
-            $(':input').removeClass('valid invalid');
-        },
+        tearDown: tearDown,
         "invalid number in min-max": function () {
             minMax.attr('data-validator-min', 1);
             minMax.attr('data-validator-max', 5);
@@ -262,10 +299,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             pattern.attr('data-validator-pattern', '^[0-9]+$');
             $('form').submit();
         },
-        tearDown: function () {
-            minMax.val('');
-            $(':input').removeClass('valid invalid');
-        },
+        tearDown: tearDown,
         "invalid value test": function () {
             pattern.val('asdf9').change();
             Y.Assert.isFalse(minMax.hasClass('valid'));
