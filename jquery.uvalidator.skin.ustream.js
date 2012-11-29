@@ -1,9 +1,17 @@
 /*jslint browser: true*/
 (function ($) {
     "use strict";
+	function getCorrectField(field) {
+		var nodeName = field.nodeName;
+		field = $(field);
+		if (nodeName === 'SELECT') {
+			field = field.closest('.control-select');
+		}
+		return field;
+	}
     $.uvalidatorSkin('ustream', {
-        setForm: function (form) {
-            this.superclass.setForm(form);
+        setForm: function (form, settings) {
+            this.superclass.setForm(form, settings);
             this.form.delegate(':input', 'focus', $.proxy(function (focusEvent) {
                 $(focusEvent.target).closest('.control-group').addClass('focused');
             }, this));
@@ -12,86 +20,50 @@
             }, this));
             return this;
         },
-        findNextInvalid: function () {
-            return this.form.find('.control-group.error :input:first');
-        },
-        isErrorMessageShown: function () {
-            return this.form.find('.uerror').length > 0;
-        },
-        isFirstErrorMessageShown: function () {
-            var controlGroups = this.form.find('.control-group.error'),
-                message = this.form.find('.uerror').closest('.control-group');
-
-            return controlGroups.length > 0 && controlGroups[0] === message[0];
-        },
         setFieldInvalid: function (field, args) {
-            $(field).addClass('invalid').removeClass('valid info')
-                .closest('.control-group').addClass('error').removeClass('success info');
+			field = getCorrectField(field);
+            field.addClass('input-invalid').removeClass('input-valid');
         },
         setFieldValid: function (field, args) {
-            $(field).addClass('valid').removeClass('invalid info')
-                .closest('.control-group').addClass('success').removeClass('error info');
+			field = getCorrectField(field);
+            field.addClass('input-valid').removeClass('input-invalid');
         },
         addFieldError: function (field, args) {
             var msg = this.getMessage(args),
+				selectGroup,
                 container,
                 errorElem;
 
-            field = $(field);
+            field = args.field;
             container = field.closest('.control-group');
-            errorElem = container.find('.uerror');
+			selectGroup = container.find('>.control-select');
+			if (selectGroup.length > 0) {
+				container = selectGroup;
+			}
+            errorElem = container.find('.tooltip-error');
 
             if (errorElem.length < 1) {
-                errorElem = $('<label />')
-                    .attr('for', field.attr('id'))
-                    .addClass('uerror')
-                    .appendTo(container);
+                errorElem = $('<span />')
+                    // .attr('for', field.attr('id'))
+                    .addClass('tooltip-error');
+				if (field[0].nodeName === 'SELECT') {
+					field.next('span.select').after(errorElem);
+				} else {
+					field.after(errorElem);
+				}
             }
-            /*
-            if (this.isErrorMessageShown()) {
-                if (this.isFirstErrorMessageShown()) {
-                    return;
-                }
-                //this.form.find('.uerror').remove();
-            }
-            */
             errorElem.html(msg);
         },
         showFieldError: function (field, args) {
             this.addFieldError(field, args);
         },
         hideFieldError: function (field, args) {
-            $(field).closest('.control-group').find('.uerror').remove();
-        },
-        onFieldValidationStart: function (event, field) {
-            $(field).removeClass('valid invalid')
-                .closest('.control-group').addClass('info')
-                .removeClass('error valid success ');
-        },
-        onFieldValidationFinish: function (field) {
-            $(field).closest('.control-group').removeClass('info');
+            $(field).closest('.control-group').find('.tooltip-error').remove();
         },
         onFormInvalid: function () {
-            this.form.find(':input.invalid:first').focus();
+            this.form
+				.find(':input.input-invalid,.control-select.input-invalid > select')
+				.first().focus();
         }
     });
-    $.uvalidatorSkin.addMessages([
-        ['required', 'The field is required.'],
-        ['number', 'Type a number, please.'],
-        ['userpassword', 'Password must contain at least 7 characters including at' +
-            ' least 1 capitalized letter AND at least 1 number.'],
-        ['passwordverify', 'Password must be the same as above.'],
-        ['creditcard', 'Invalid credit card number.'],
-        ['url', 'Please type a valid url.'],
-        ['email', 'Please type a valid email address.'],
-        ['min', function (args) {
-            var minVal = args.field.attr('data-validation-min') || args.field.attr('min');
-            return 'The minimum value is ' + minVal + '.';
-        }],
-        ['max', function (args) {
-            var maxVal = args.field.attr('data-validation-max') || args.field.attr('max');
-            return 'The maximum value is ' + maxVal + '.';
-        }],
-        ['pattern', 'Invalid format.']
-    ]);
 }(window.jQuery));

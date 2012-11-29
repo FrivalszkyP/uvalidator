@@ -36,7 +36,7 @@
             * @property {Boolean} validationEvents.keyup
             * @default keyup
             */
-            keyup: false,
+            keyup: true,
             /**
             * Validate on click event
             * @property {Boolean} validationEvents.click
@@ -56,7 +56,11 @@
         FIELD_VALID: 'fieldValid',
         FIELD_INVALID: 'fieldInvalid',
         FORM_VALID: 'formValid',
-        FORM_INVALID: 'formInvalid'
+        FORM_INVALID: 'formInvalid',
+		FINISH_FORM_VALIDATION: 'finishFormValidation',
+		START_FORM_VALIDATION: 'startFormValidation',
+		FINISH_FIELD_VALIDATION: 'finishFieldValidation',
+		START_FIELD_VALIDATION: 'startFieldValidation'
     };
     if (window.console) {
         dbg = window.console.log;
@@ -158,8 +162,8 @@
         return form.find('[data-validator-group="' + group + '"]');
     }
 
-    function validateWith(value, field, name, callback) {
-        var validator = validatorManager.getValidatorByName(name);
+    function validateWith(value, field, name, callback, isGroup) {
+        var validator = validatorManager.getValidatorByName(name, isGroup);
         if (validator) {
             validator.fn(value, field, callback);
         } else {
@@ -180,7 +184,7 @@
             value = getFieldValue(field);
         }
 
-        field.trigger('startFieldValidation', field);
+        field.trigger(events.START_FIELD_VALIDATION, field);
 
         function onValidate(valid, validator) {
             if (callbackCalled) {
@@ -201,7 +205,7 @@
                     output.field = field;
                 }
                 callbackCalled = true;
-                field.trigger('finishFieldValidation', field);
+                field.trigger(events.FINISH_FIELD_VALIDATION, field);
                 callback(output, field);
             }
         }
@@ -222,7 +226,7 @@
                     validated += 1;
                     if (validated >= vl) {
                         callbackCalled = true;
-                        field.trigger('finishFieldValidation', field);
+                        field.trigger(events.FINISH_FIELD_VALIDATION, field);
                         // if not matched any validator then in the end the
                         // index will be eq to vl, so we must call the
                         // callback by hand
@@ -247,37 +251,51 @@
         }
     }
 
+	/**
+	 * Helper to decide if the validation should run a certain event. It's good
+	 * to handle exceptions, like we don't want to validate on keyup if the
+	 * user just pressed the TAB button.
+	 * @method isAllowedEventValidation
+	 * @private
+	 * @param {Event} e
+	 */
+	function isAllowedEventValidation(e) {
+		var output = true,
+			which;
+		if (e.type === 'keyup') {
+			which = e.which;
+			// on keyup event don't allow to validate if user presses these
+			// buttons
+			// I would use switch/case but jsperf says it's the slowest way to do the comparisons.
+			if (which === 9 || which === 16 || which === 17 || which === 18) {
+				output = false;
+			}
+		}
+		return output;
+	}
+
     function bindDelegation(form, settings) {
-        var fields, groupFields, groups, groupsLen, validationEvents;
+        var validationEvents;
 
         form = $(form);
         form.attr('novalidate', 'novalidate');
 
-        fields = form.find(':input');
-
-        groupFields = fields.filter('[data-validator-group]');
-        fields = fields.not('[data-validator-group],:button,:submit');
-
-        groups = {};
-        groupsLen = 0;
-        groupFields.each(function () {
-            var that = $(this), // caching
-                group = that.attr('data-validator-group'),
-                form;
-
-            if (!groups[group]) {
-                groups[group] = getGroupItemsForField(that);
-                groupsLen += 1;
-            }
-        });
         $.each(settings.validationEvents, function (name, value) {
             if (value) {
                 form.delegate(':input:not(:button,:submit,[data-validator-group])',
                     name, function (e) {
+						// don't validate on tab keyup
+						if (!isAllowedEventValidation(e)) {
+							return;
+						}
                         validateField(e.target, triggerFieldEvents, false);
                     });
 
                 form.delegate(':input[data-validator-group]', name, function (e) {
+					// don't validate on tab keyup
+					if (!isAllowedEventValidation(e)) {
+						return;
+					}
                     var target = $(e.target),
                         elements;
 
@@ -290,7 +308,26 @@
         });
 
         form.submit(function (submitEvent) {
-            var validationResults, isFormValid;
+            var validationResults, isFormValid, fields, groupFields, groups, groupsLen;
+
+			fields = form.find(':input');
+
+			groupFields = fields.filter('[data-validator-group]');
+
+			fields = fields.not('[data-validator-group],:button,:submit');
+
+			groups = {};
+			groupsLen = 0;
+			groupFields.each(function () {
+				var that = $(this), // caching
+					group = that.attr('data-validator-group'),
+					form;
+
+				if (!groups[group]) {
+					groups[group] = getGroupItemsForField(that);
+					groupsLen += 1;
+				}
+			});
 
             validationResults = [];
             isFormValid = true;
@@ -313,7 +350,7 @@
                 }
 
                 if (validationResults.length >= (fields.length + groupsLen)) {
-                    form.trigger('finishFormValidation', form);
+                    form.trigger(events.FINISH_FORM_VALIDATION, form);
                     if (isFormValid) {
                         form.trigger(events.FORM_VALID, {results: validationResults});
                     } else {
@@ -328,7 +365,7 @@
                 }
             }
 
-            form.trigger('startFormValidation', form);
+            form.trigger(events.START_FORM_VALIDATION, form);
             fields.each(function () {
                 validateField(this, onValidate, false);
             });
@@ -367,6 +404,10 @@
                 triggerFieldEvents(result, field);
                 callback(result, field);
             }, conf);
+        },
+        validateWith: function (field, method, callback) {
+            var isGroup = field.is('[data-validator-group]');
+            validateWith(getFieldValue(field), field, method, callback, isGroup);
         }
     };
 

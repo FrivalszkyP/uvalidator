@@ -14,15 +14,17 @@ YUI().use('node', 'test', 'test-console', function (Y) {
         min = $('#min'),
         max = $('#max'),
         minMax = $('#min-max'),
-        pattern = $('#pattern');
+        pattern = $('#pattern'),
+        invalidClass = 'input-invalid',
+        validClass = 'input-valid';
 
     Y.Assert.uFieldIsInvallid = function uFieldIsVallid(field) {
-        Y.Assert.isTrue(field.hasClass('invalid'), 'uField is invalid');
-        Y.Assert.isFalse(field.hasClass('valid'), 'uField is invalid');
+        Y.Assert.isTrue(field.hasClass(invalidClass), 'uField is invalid');
+        Y.Assert.isFalse(field.hasClass(validClass), 'uField is invalid');
     };
     Y.Assert.uFieldIsVallid = function uFieldIsVallid(field) {
-        Y.Assert.isTrue(field.hasClass('valid'), 'uField is valid');
-        Y.Assert.isFalse(field.hasClass('invalid'), 'uField is valid');
+        Y.Assert.isTrue(field.hasClass(validClass), 'uField is valid');
+        Y.Assert.isFalse(field.hasClass(invalidClass), 'uField is valid');
     };
     function setUp() {
     }
@@ -94,31 +96,31 @@ YUI().use('node', 'test', 'test-console', function (Y) {
         tearDown: tearDown,
         "lowercase letters only": function () {
             pass.val('foobarbaz').change();
-            Y.Assert.isTrue(pass.hasClass('invalid'));
+            Y.Assert.isTrue(pass.hasClass(invalidClass));
 		},
         "uppercase letters only": function () {
             pass.val('FOOBARBAZ').change();
-            Y.Assert.isTrue(pass.hasClass('invalid'));
+            Y.Assert.isTrue(pass.hasClass(invalidClass));
 		},
         "no number": function () {
             pass.val('Foobarbaz.').change();
-            Y.Assert.isTrue(pass.hasClass('invalid'));
+            Y.Assert.isTrue(pass.hasClass(invalidClass));
 		},
         "no uppercase": function () {
             pass.val('foobarbaz7.').change();
-            Y.Assert.isTrue(pass.hasClass('invalid'));
+            Y.Assert.isTrue(pass.hasClass(invalidClass));
 		},
         "no lowercase": function () {
             pass.val('FOOBARBAZ7.').change();
-            Y.Assert.isTrue(pass.hasClass('invalid'));
+            Y.Assert.isTrue(pass.hasClass(invalidClass));
 		},
         "less than 7 chars": function () {
             pass.val('F1f.').change();
-            Y.Assert.isTrue(pass.hasClass('invalid'));
+            Y.Assert.isTrue(pass.hasClass(invalidClass));
 		},
         "valid password format": function () {
             pass.val('F1fooabar').change();
-            Y.Assert.isTrue(pass.hasClass('valid'));
+            Y.Assert.isTrue(pass.hasClass(validClass));
 		}
 	}));
 	coreSuite.add(new Y.Test.Case({
@@ -133,14 +135,14 @@ YUI().use('node', 'test', 'test-console', function (Y) {
         "passwords does not match": function () {
             pass.val('F1fooabar').change();
             pass2.val('F1fooaba').change();
-            Y.Assert.isTrue(pass.hasClass('valid'));
-            Y.Assert.isFalse(pass2.hasClass('valid'));
+            Y.Assert.isTrue(pass.hasClass(validClass));
+            Y.Assert.isFalse(pass2.hasClass(validClass));
 		},
         "passwords does match": function () {
             pass.val('F1fooabar').change();
             pass2.val('F1fooabar').change();
-            Y.Assert.isTrue(pass.hasClass('valid'));
-            Y.Assert.isTrue(pass2.hasClass('valid'));
+            Y.Assert.isTrue(pass.hasClass(validClass));
+            Y.Assert.isTrue(pass2.hasClass(validClass));
 		}
 	}));
 	coreSuite.add(new Y.Test.Case({
@@ -153,11 +155,11 @@ YUI().use('node', 'test', 'test-console', function (Y) {
         tearDown: tearDown,
         "without http": function () {
             url.val('www.ustream.tv').change();
-            Y.Assert.isFalse(url.hasClass('valid'));
+            Y.Assert.isFalse(url.hasClass(validClass));
 		},
         "valid url": function () {
             url.val('http://www.ustream.tv').change();
-            Y.Assert.isTrue(url.hasClass('valid'));
+            Y.Assert.isTrue(url.hasClass(validClass));
 		}
 	}));
 	coreSuite.add(new Y.Test.Case({
@@ -170,15 +172,15 @@ YUI().use('node', 'test', 'test-console', function (Y) {
         tearDown: tearDown,
         "invalid email formats": function () {
             email.val('foo').change();
-            Y.Assert.isFalse(email.hasClass('valid'));
+            Y.Assert.isFalse(email.hasClass(validClass));
             email.val('foo@').change();
-            Y.Assert.isFalse(email.hasClass('valid'));
+            Y.Assert.isFalse(email.hasClass(validClass));
             email.val('foo@bar').change();
-            Y.Assert.isFalse(email.hasClass('valid'));
+            Y.Assert.isFalse(email.hasClass(validClass));
 		},
         "valid email format": function () {
             email.val('foo@bar.baz').change();
-            Y.Assert.isTrue(email.hasClass('valid'));
+            Y.Assert.isTrue(email.hasClass(validClass));
 		}
 	}));
 	coreSuite.add(new Y.Test.Case({
@@ -191,13 +193,13 @@ YUI().use('node', 'test', 'test-console', function (Y) {
         tearDown: tearDown,
         "invalid creditcard formats": function () {
             creditcard.val('5555#5555#5555#4444').change();
-            Y.Assert.isFalse(creditcard.hasClass('valid'), 'Disallowed characters');
+            Y.Assert.isFalse(creditcard.hasClass(validClass), 'Disallowed characters');
             creditcard.val('5555-5555-5555-4443').change();
-            Y.Assert.isFalse(creditcard.hasClass('valid'), 'Invalid card number');
+            Y.Assert.isFalse(creditcard.hasClass(validClass), 'Invalid card number');
 		},
         "valid creditcard format": function () {
             creditcard.val('5555-5555-5555-4444').change();
-            Y.Assert.isTrue(creditcard.hasClass('valid'));
+            Y.Assert.isTrue(creditcard.hasClass(validClass));
 		}
 	}));
 	coreSuite.add(new Y.Test.Case({
@@ -210,28 +212,28 @@ YUI().use('node', 'test', 'test-console', function (Y) {
         tearDown: tearDown,
         "invalid format in min": function () {
             min.val('aaa').change();
-            Y.Assert.isFalse(min.hasClass('valid'));
+            Y.Assert.isFalse(min.hasClass(validClass));
 		},
         "minimum pass tests": function () {
             min.attr('data-validator-min', 5);
             min.val('4').change();
-            Y.Assert.isFalse(min.hasClass('valid'), 'minimum is 5 value is 4');
+            Y.Assert.isFalse(min.hasClass(validClass), 'minimum is 5 value is 4');
             min.attr('data-validator-min', -5);
             min.val('-6').change();
-            Y.Assert.isFalse(min.hasClass('valid'), 'minimum is -5 value is -6');
+            Y.Assert.isFalse(min.hasClass(validClass), 'minimum is -5 value is -6');
         },
         "valid minimum values": function () {
             min.attr('data-validator-min', -5);
             min.val('-4').change();
-            Y.Assert.isTrue(min.hasClass('valid'), 'minimum is -5 value is -4');
+            Y.Assert.isTrue(min.hasClass(validClass), 'minimum is -5 value is -4');
             min.val('-5').change();
-            Y.Assert.isTrue(min.hasClass('valid'), 'minimum is -5 value is -5');
+            Y.Assert.isTrue(min.hasClass(validClass), 'minimum is -5 value is -5');
 
             min.attr('data-validator-min', 0);
             min.val('0').change();
-            Y.Assert.isTrue(min.hasClass('valid'), 'minimum is 0 value is 0');
+            Y.Assert.isTrue(min.hasClass(validClass), 'minimum is 0 value is 0');
             min.val('0.1').change();
-            Y.Assert.isTrue(min.hasClass('valid'), 'minimum is 0 value is 0.1');
+            Y.Assert.isTrue(min.hasClass(validClass), 'minimum is 0 value is 0.1');
 		}
 	}));
 	coreSuite.add(new Y.Test.Case({
@@ -244,30 +246,30 @@ YUI().use('node', 'test', 'test-console', function (Y) {
         tearDown: tearDown,
         "invalid format in max": function () {
             max.val('aaa').change();
-            Y.Assert.isFalse(max.hasClass('valid'));
+            Y.Assert.isFalse(max.hasClass(validClass));
 		},
         "invalid maximum number tests": function () {
             max.attr('data-validator-max', 5);
             max.val('6').change();
-            Y.Assert.isFalse(max.hasClass('valid'), 'maximum is 5 value is 6');
+            Y.Assert.isFalse(max.hasClass(validClass), 'maximum is 5 value is 6');
             max.attr('data-validator-max', -5);
             max.val('-4').change();
-            Y.Assert.isFalse(max.hasClass('valid'), 'maximum is -5 value is -4');
+            Y.Assert.isFalse(max.hasClass(validClass), 'maximum is -5 value is -4');
         },
         "valid maximum values": function () {
             max.attr('data-validator-max', -5);
             max.val('-6').change();
-            Y.Assert.isTrue(max.hasClass('valid'), 'maximum is -5 value is -6');
+            Y.Assert.isTrue(max.hasClass(validClass), 'maximum is -5 value is -6');
             max.val('-5').change();
-            Y.Assert.isTrue(max.hasClass('valid'), 'maximum is -5 value is -5');
+            Y.Assert.isTrue(max.hasClass(validClass), 'maximum is -5 value is -5');
 
             max.attr('data-validator-max', 0);
             max.val('0').change();
-            Y.Assert.isTrue(max.hasClass('valid'), 'maximum is 0 value is 0');
+            Y.Assert.isTrue(max.hasClass(validClass), 'maximum is 0 value is 0');
 
             max.attr('data-validator-max', 1);
             max.val('0.1').change();
-            Y.Assert.isTrue(max.hasClass('valid'), 'maximum is 1 value is 0.1');
+            Y.Assert.isTrue(max.hasClass(validClass), 'maximum is 1 value is 0.1');
 		}
 	}));
 	coreSuite.add(new Y.Test.Case({
@@ -282,13 +284,13 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             minMax.attr('data-validator-min', 1);
             minMax.attr('data-validator-max', 5);
             minMax.val(0).change();
-            Y.Assert.isFalse(minMax.hasClass('valid'));
+            Y.Assert.isFalse(minMax.hasClass(validClass));
             minMax.val(6).change();
-            Y.Assert.isFalse(minMax.hasClass('valid'));
+            Y.Assert.isFalse(minMax.hasClass(validClass));
         },
         "valid number in min-max": function () {
             minMax.val(3).change();
-            Y.Assert.isTrue(minMax.hasClass('valid'));
+            Y.Assert.isTrue(minMax.hasClass(validClass));
 		}
 	}));
 	coreSuite.add(new Y.Test.Case({
@@ -302,11 +304,11 @@ YUI().use('node', 'test', 'test-console', function (Y) {
         tearDown: tearDown,
         "invalid value test": function () {
             pattern.val('asdf9').change();
-            Y.Assert.isFalse(minMax.hasClass('valid'));
+            Y.Assert.isFalse(minMax.hasClass(validClass));
         },
         "valid value test": function () {
             pattern.val('9').change();
-            Y.Assert.isTrue(pattern.hasClass('valid'));
+            Y.Assert.isTrue(pattern.hasClass(validClass));
         }
 	}));
 	Y.Test.Runner.add(coreSuite);

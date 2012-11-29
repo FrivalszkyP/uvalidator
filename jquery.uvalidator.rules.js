@@ -1,6 +1,13 @@
 /*jslint browser: true */
 (function ($) {
     "use strict";
+	function zeroPad(n, count) {
+		n = String(n);
+		while (n.length < count) {
+			n = "0" + n;
+		}
+		return n;
+	}
     var patterns, dbg;
 
     patterns = {
@@ -53,7 +60,7 @@
         }
     );
     $.uvalidator.addGroupMethod(
-        'input[data-validator-type="date"][required],input[data-validator-type="date"].required',
+        ':input[data-validator-type="date"][required],:input[data-validator-type="date"].required',
         'required-date',
         function (value, items, callback) {
             var isValid = true;
@@ -63,12 +70,36 @@
             callback(isValid);
         }
     );
+    $.uvalidator.addGroupMethod(
+        ':input[data-validator-type="date"].cc-expiration',
+        'expiration-date',
+        function (value, items, callback) {
+            var year = items.filter('[data-validator-ccexp="year"]'),
+				month = items.filter('[data-validator-ccexp="month"]'),
+				yearVal = year.val(),
+				monthVal = zeroPad(month.val(), 2),
+				now = new Date(),
+				thisYear,
+				thisMonth,
+				isValid;
+
+			thisYear = String(now.getFullYear());
+			thisMonth = zeroPad(now.getMonth() + 1, 2);
+
+			if (yearVal.length === 2) {
+				thisYear = thisYear.slice(-2);
+			}
+
+			callback(+(thisYear + thisMonth) <= +(yearVal + monthVal));
+        }
+    );
 
     $.uvalidator.addMethod(
         '.number,[type="number"]',
         'number',
         function (value, element, callback) {
-            var valid = isOptional(element, value) || !isNaN(+value);
+            var valid = isOptional(element, value) ||
+					(!isNaN(+value) && !isNaN(parseInt(value, 10)));
             callback(valid);
         }
     );

@@ -20,13 +20,15 @@
          * @protected
          * @chainable
          */
-        setForm: function (form) {
-            this.form = form;
+        setForm: function (form, settings) {
             var that = $(this);
+            this.form = form;
+			settings = settings || {};
+
             function proxyTrigger(event) {
                 that.trigger(event.type, {originalEvent: event});
             }
-            form.uvalidator()
+            form.uvalidator(settings)
                 .on('formInvalid', $.proxy(this.onFormInvalid, this))
                 .on('formValid', $.proxy(this.onFormValid, this))
                 .on('fieldInvalid', $.proxy(this.onFieldInvalid, this))
@@ -149,20 +151,24 @@
     };
     function createSkin(name, proto) {
         proto = $.extend({}, defaultProto, proto);
-        var Skin = function UvalidatorSkin() {},
-            skin;
+
+        var Skin = function UvalidatorSkin() {};
         Skin.prototype = proto;
-        skin = new Skin();
-        skin.superclass = {};
-        $.each(defaultProto, function (key, val) {
-            skin.superclass[key] = function () {
-                return val.apply(skin, toArray(arguments));
-            };
-        });
-        skins[name] = skin;
+
+        skins[name] = function () {
+			var skin = new Skin();
+			skin.superclass = {};
+			$.each(defaultProto, function (key, val) {
+				skin.superclass[key] = function () {
+					return val.apply(skin, toArray(arguments));
+				};
+			});
+			return skin;
+		};
     }
-    function applySkin(skin, form) {
-        return skins[skin].setForm(form);
+    function applySkin(skin, form, settings) {
+		var skinInstance = new skins[skin]();
+        return skinInstance.setForm(form, settings);
     }
     $.uvalidatorSkin = createSkin;
     $.uvalidatorApplySkin = applySkin;
