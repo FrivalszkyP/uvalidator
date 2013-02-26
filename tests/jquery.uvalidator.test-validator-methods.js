@@ -66,6 +66,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             Y.Assert.uFieldIsVallid(required);
         }
 	}));
+
 	coreSuite.add(new Y.Test.Case({
 		name: "Required group tests",
         setUp: function () {
@@ -85,6 +86,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             Y.Assert.uFieldIsVallid(radio2);
         }
 	}));
+
 	coreSuite.add(new Y.Test.Case({
 		name: "Password format tests",
         setUp: function () {
@@ -123,6 +125,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             Y.Assert.isTrue(pass.hasClass(validClass));
 		}
 	}));
+
 	coreSuite.add(new Y.Test.Case({
 		name: "Password verify tests",
         setUp: function () {

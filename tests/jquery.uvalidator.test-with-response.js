@@ -15,36 +15,41 @@ YUI().use('node', 'test', 'test-console', function (Y) {
         submitButton = '#SubmitButton',
 		validClass = 'input-valid',
 		invalidClass = 'input-invalid',
-		errorLabelClass = 'tooltip-error';
+		errorLabelClass = 'tooltip-error',
+		server;
+
+	function createServer() {
+		server = sinon.fakeServer.create();
+		server.respondWith('POST', '/submit/form', function (xhr) {
+			var errors = [],
+				response = {};
+			if (form.find('[name="foo"]').val() % 2) {
+				errors.push(['foo', "Look! This field is invalid"]);
+			}
+			if (form.find('[name="bar"]:checked').val() === "2") {
+				errors.push(['bar', "Grrr, it's wrong..."]);
+			}
+			response.success = errors.length < 1;
+			if (!response.success) {
+				response.formFields = {};
+				errors.forEach(function (error) {
+					response.formFields[error[0]] = {
+						text: error[1]
+					};
+				});
+			}
+			xhr.respond(200, {'Content-Type': 'application/json'}, JSON.stringify(response));
+		});
+	}
+
+	function destroyServer() {
+		server.restore();
+	}
 
 	coreSuite = new Y.Test.Suite({
 		name: 'validator tests',
 		setUp: function () {
-            var server = sinon.fakeServer.create(),
-                skin;
-
-            this.server = server;
-
-            server.respondWith('POST', '/submit/form', function (xhr) {
-                var errors = [],
-                    response = {};
-                if (form.find('[name="foo"]').val() % 2) {
-                    errors.push(['foo', "Look! This field is invalid"]);
-                }
-                if (form.find('[name="bar"]:checked').val() === "2") {
-                    errors.push(['bar', "Grrr, it's wrong..."]);
-                }
-                response.success = errors.length < 1;
-                if (!response.success) {
-                    response.formFields = {};
-                    errors.forEach(function (error) {
-                        response.formFields[error[0]] = {
-                            text: error[1]
-                        };
-                    });
-                }
-                xhr.respond(200, {'Content-Type': 'application/json'}, JSON.stringify(response));
-            });
+			var skin;
 
             messages.hide();
             skin = $.uvalidatorApplySkin("ustream", form);
@@ -95,13 +100,13 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 		},
 		tearDown: function () {
             // $('.control-group').removeClass('success error');
-            this.server.restore();
 		}
 	});
 
 	coreSuite.add(new Y.Test.Case({
 		name: "Test ajax form submission",
 		setUp: function () {
+			createServer();
 			$(':input').removeClass([validClass, invalidClass].join(' ')).val();
 			$(':radio').prop('checked', false);
 			$('#first,#fooNotRequired,#fooNumber').val('');
@@ -110,11 +115,13 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 			radio2.prop('checked', true);
 		},
 		tearDown: function () {
+			destroyServer();
 			$(':input').removeClass([validClass, invalidClass].join(' '));
 			$('#.control-group').removeClass('error success');
 		},
 		"Test invalid fields": function () {
 			$('form').submit();
+
 			this.wait(function () {
 
 				var controlGroups = $('.' + invalidClass).closest('.control-group'),
@@ -155,4 +162,3 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 	Y.Test.Runner.add(coreSuite);
 	Y.Test.Runner.run();
 });
-

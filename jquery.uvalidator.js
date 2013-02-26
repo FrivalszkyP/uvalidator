@@ -274,6 +274,70 @@
 		return output;
 	}
 
+    function validateForm(form) {
+        var validationResults, isFormValid, fields, groupFields, groups, groupsLen;
+
+        fields = form.find(':input');
+
+        groupFields = fields.filter('[data-validator-group]');
+
+        fields = fields.not('[data-validator-group],:button,:submit');
+
+        groups = {};
+        groupsLen = 0;
+        groupFields.each(function () {
+            var that = $(this), // caching
+                group = that.attr('data-validator-group');
+
+            if (!groups[group]) {
+                groups[group] = getGroupItemsForField(that);
+                groupsLen += 1;
+            }
+        });
+
+        validationResults = [];
+        isFormValid = true;
+
+        function onValidate(result, field) {
+            isFormValid = isFormValid && result.isValid;
+            validationResults.push({
+                field: field,
+                isValid: result.isValid,
+                validator: result.validator,
+                isGroup: false
+            });
+
+            if (result.isValid) {
+                field.trigger(events.FIELD_VALID, result);
+            } else {
+                field.trigger(events.FIELD_INVALID, result);
+            }
+
+            if (validationResults.length >= (fields.length + groupsLen)) {
+                form.trigger(events.FINISH_FORM_VALIDATION, form);
+                if (isFormValid) {
+                    form.trigger(events.FORM_VALID, {results: validationResults});
+                } else {
+                    form.trigger(events.FORM_INVALID, {
+                        results: validationResults,
+                        errors: $.makeArray($(validationResults).filter(function (index, item) {
+                            return !item.isValid;
+                        }))
+                    });
+                }
+
+            }
+        }
+
+        form.trigger(events.START_FORM_VALIDATION, form);
+        fields.each(function () {
+            validateField(this, onValidate, false);
+        });
+        $.each(groups, function (group, items) {
+            validateField(items, onValidate, true);
+        });
+    }
+
     function bindDelegation(form, settings) {
         var validationEvents;
 
@@ -308,70 +372,8 @@
         });
 
         form.submit(function (submitEvent) {
-            var validationResults, isFormValid, fields, groupFields, groups, groupsLen;
-
-			fields = form.find(':input');
-
-			groupFields = fields.filter('[data-validator-group]');
-
-			fields = fields.not('[data-validator-group],:button,:submit');
-
-			groups = {};
-			groupsLen = 0;
-			groupFields.each(function () {
-				var that = $(this), // caching
-					group = that.attr('data-validator-group'),
-					form;
-
-				if (!groups[group]) {
-					groups[group] = getGroupItemsForField(that);
-					groupsLen += 1;
-				}
-			});
-
-            validationResults = [];
-            isFormValid = true;
-
             submitEvent.preventDefault();
-
-            function onValidate(result, field) {
-                isFormValid = isFormValid && result.isValid;
-                validationResults.push({
-                    field: field,
-                    isValid: result.isValid,
-                    validator: result.validator,
-                    isGroup: false
-                });
-
-                if (result.isValid) {
-                    field.trigger(events.FIELD_VALID, result);
-                } else {
-                    field.trigger(events.FIELD_INVALID, result);
-                }
-
-                if (validationResults.length >= (fields.length + groupsLen)) {
-                    form.trigger(events.FINISH_FORM_VALIDATION, form);
-                    if (isFormValid) {
-                        form.trigger(events.FORM_VALID, {results: validationResults});
-                    } else {
-                        form.trigger(events.FORM_INVALID, {
-                            results: validationResults,
-                            errors: $.makeArray($(validationResults).filter(function (index, item) {
-                                return !item.isValid;
-                            }))
-                        });
-                    }
-
-                }
-            }
-
-            form.trigger(events.START_FORM_VALIDATION, form);
-            fields.each(function () {
-                validateField(this, onValidate, false);
-            });
-            $.each(groups, function (group, items) {
-                validateField(items, onValidate, true);
-            });
+            validateForm(form);
         });
     }
 
@@ -408,8 +410,10 @@
         validateWith: function (field, method, callback) {
             var isGroup = field.is('[data-validator-group]');
             validateWith(getFieldValue(field), field, method, callback, isGroup);
+        },
+        validate: function (form) {
+            validateForm($(form));
         }
     };
-
     $.fn.uvalidator = UValidator;
 }(window.jQuery));
