@@ -1,6 +1,6 @@
 /*jslint browser: true*/
 (function ($) {
-	"use strict";
+    "use strict";
     var skins = {},
         messages = {},
         defaultProto;
@@ -23,12 +23,13 @@
         setForm: function (form, settings) {
             var that = $(this);
             this.form = form;
-			settings = settings || {};
+            settings = settings || {};
 
             function proxyTrigger(event) {
                 var args = $.makeArray(arguments).slice(1);
                 that.trigger(event, args);
             }
+
             form.uvalidator(settings)
                 .on('formInvalid', $.proxy(this.onFormInvalid, this))
                 .on('formValid', $.proxy(this.onFormValid, this))
@@ -157,18 +158,18 @@
         Skin.prototype = proto;
 
         skins[name] = function () {
-			var skin = new Skin();
-			skin.superclass = {};
-			$.each(defaultProto, function (key, val) {
-				skin.superclass[key] = function () {
-					return val.apply(skin, toArray(arguments));
-				};
-			});
-			return skin;
-		};
+            var skin = new Skin();
+            skin.superclass = {};
+            $.each(defaultProto, function (key, val) {
+                skin.superclass[key] = function () {
+                    return val.apply(skin, toArray(arguments));
+                };
+            });
+            return skin;
+        };
     }
     function applySkin(skin, form, settings) {
-		var skinInstance = new skins[skin]();
+        var skinInstance = new skins[skin]();
         return skinInstance.setForm(form, settings);
     }
     $.uvalidatorSkin = createSkin;

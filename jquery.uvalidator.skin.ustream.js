@@ -1,14 +1,14 @@
 /*jslint browser: true*/
 (function ($) {
     "use strict";
-	function getCorrectField(field) {
-		var nodeName = field.nodeName;
-		field = $(field);
-		if (nodeName === 'SELECT') {
-			field = field.closest('.control-select');
-		}
-		return field;
-	}
+    function getCorrectField(field) {
+        var nodeName = field.nodeName;
+        field = $(field);
+        if (nodeName === 'SELECT') {
+            field = field.closest('.control-select');
+        }
+        return field;
+    }
     $.uvalidatorSkin('ustream', {
         setForm: function (form, settings) {
             this.superclass.setForm(form, settings);
@@ -21,36 +21,40 @@
             return this;
         },
         setFieldInvalid: function (field, args) {
-			field = getCorrectField(field);
+            field = getCorrectField(field);
             field.addClass('input-invalid').removeClass('input-valid');
         },
         setFieldValid: function (field, args) {
-			field = getCorrectField(field);
+            field = getCorrectField(field);
             field.addClass('input-valid').removeClass('input-invalid');
         },
         addFieldError: function (field, args) {
             var msg = this.getMessage(args),
-				selectGroup,
+                selectGroup,
                 container,
+                fieldOrGroup,
                 errorElem;
 
-            field = args.field;
-            container = field.closest('.control-group');
-			selectGroup = container.find('>.control-select');
-			if (selectGroup.length > 0) {
-				container = selectGroup;
-			}
+            fieldOrGroup = args.field;
+            container = fieldOrGroup.closest('.control-group');
+            selectGroup = container.find('>.control-select');
+
+            if (selectGroup.length > 0) {
+                container = selectGroup;
+            }
+
             errorElem = container.find('.tooltip-error');
 
             if (errorElem.length < 1) {
                 errorElem = $('<span />')
-                    // .attr('for', field.attr('id'))
-                    .addClass('tooltip-error');
-				if (field[0].nodeName === 'SELECT') {
-					field.next('span.select').after(errorElem);
-				} else {
-					field.after(errorElem);
-				}
+                        // .attr('for', fieldOrGroup.attr('id'))
+                        .addClass('tooltip-error');
+
+                if (fieldOrGroup[0].nodeName === 'SELECT') {
+                    fieldOrGroup.next('span.select').after(errorElem);
+                } else {
+                    fieldOrGroup.after(errorElem);
+                }
             }
             errorElem.html(msg);
         },
@@ -62,8 +66,8 @@
         },
         onFormInvalid: function () {
             this.form
-				.find(':input.input-invalid,.control-select.input-invalid > select')
-				.first().focus();
+                    .find(':input.input-invalid,.control-select.input-invalid > select')
+                    .first().focus();
         }
     });
 }(window.jQuery));
