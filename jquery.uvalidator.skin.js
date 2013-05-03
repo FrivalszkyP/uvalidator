@@ -26,7 +26,8 @@
 			settings = settings || {};
 
             function proxyTrigger(event) {
-                that.trigger(event.type, {originalEvent: event});
+                var args = $.makeArray(arguments).slice(1);
+                that.trigger(event, args);
             }
             form.uvalidator(settings)
                 .on('formInvalid', $.proxy(this.onFormInvalid, this))
