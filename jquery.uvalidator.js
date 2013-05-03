@@ -281,7 +281,7 @@
 
         groupFields = fields.filter('[data-validator-group]');
 
-        fields = fields.not('[data-validator-group],:button,:submit');
+        fields = fields.not('[data-validator-group],:button,:submit,.skip-validation');
 
         groups = {};
         groupsLen = 0;
@@ -346,7 +346,7 @@
 
         $.each(settings.validationEvents, function (name, value) {
             if (value) {
-                form.delegate(':input:not(:button,:submit,[data-validator-group])',
+                form.delegate(':input:not(:button,:submit,[data-validator-group],.skip-validation)',
                     name, function (e) {
 						// don't validate on tab keyup
 						if (!isAllowedEventValidation(e)) {
