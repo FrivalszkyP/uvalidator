@@ -62,6 +62,7 @@
 		FINISH_FIELD_VALIDATION: 'finishFieldValidation',
 		START_FIELD_VALIDATION: 'startFieldValidation'
     };
+
     if (window.console) {
         dbg = window.console.log;
     } else {
@@ -97,6 +98,7 @@
             getValidatorIndexByName: function getValidatorIndexByName(name, isGroup) {
                 var index = -1,
                     byName = isGroup ? groupValidatorsByName : validatorsByName;
+
                 if (typeof byName[name] === 'number') {
                     index = byName[name];
                 }
@@ -164,6 +166,7 @@
 
     function validateWith(value, field, name, callback, isGroup) {
         var validator = validatorManager.getValidatorByName(name, isGroup);
+
         if (validator) {
             validator.fn(value, field, callback);
         } else {
@@ -180,70 +183,79 @@
         isValid = true;
         callbackCalled = false;
         vl = validatorManager.len(isGroup);
+
         if (!isGroup) {
             value = getFieldValue(field);
         }
 
-        field.trigger(events.START_FIELD_VALIDATION, field);
+        function finishValidation(validator) {
+            var result = {
+                isValid: isValid,
+                isGroup: isGroup,
+                validator: validator.name,
+                field: field
+            };
+            callbackCalled = true;
+            field.trigger(events.FINISH_FIELD_VALIDATION, field);
 
-        function onValidate(valid, validator) {
+            // if not matched any validator then in the end the
+            // index will be eq to vl, so we must call the
+            // callback by hand
+            callback(result, field);
+        }
+
+        function onValidate(valid, validator, next) {
+
             if (callbackCalled) {
                 return;
             }
+
             index += 1;
             validated += 1;
             isValid = isValid && valid;
+
             if (validated < vl && isValid) {
-                validate();
+                // call next validation
+                next();
             } else {
-                var output = {
-                    isValid: isValid,
-                    isGroup: isGroup
-                };
-                if (!isValid) {
-                    output.validator = validator.name;
-                    output.field = field;
-                }
-                callbackCalled = true;
-                field.trigger(events.FINISH_FIELD_VALIDATION, field);
-                callback(output, field);
+                finishValidation(validator);
             }
         }
 
-        function getOnValidate(validator) {
+        function getOnValidate(validator, validate) {
             return function (valid) {
-                onValidate(valid, validator);
+                onValidate(valid, validator, validate);
             };
         }
 
         function validate() {
             var validator;
+
             while (index < vl && isValid) {
+
                 validator = validatorManager.getValidatorByIndex(index, isGroup);
+
                 if (field.is(validator.selector)) {
-                    validator.fn(value, field, getOnValidate(validator));
+                    validator.fn(value, field, getOnValidate(validator, validate));
                 } else {
                     validated += 1;
+
                     if (validated >= vl) {
-                        callbackCalled = true;
-                        field.trigger(events.FINISH_FIELD_VALIDATION, field);
-                        // if not matched any validator then in the end the
-                        // index will be eq to vl, so we must call the
-                        // callback by hand
-                        callback({
-                            validator: validator,
-                            isValid: isValid,
-                            isGroup: isGroup
-                        }, field);
+                        finishValidation(validator);
                     }
                 }
+
                 index += 1;
             }
         }
+
+        field.trigger(events.START_FIELD_VALIDATION, field);
+
         validate();
     }
 
     function triggerFieldEvents(result, field) {
+
         if (result.isValid) {
             field.trigger(events.FIELD_VALID, result);
         } else {
@@ -262,8 +274,10 @@
 	function isAllowedEventValidation(e) {
 		var output = true,
 			which;
+
 		if (e.type === 'keyup') {
 			which = e.which;
+
 			// on keyup event don't allow to validate if user presses these
 			// buttons
 			// I would use switch/case but jsperf says it's the slowest way to do the comparisons.
@@ -315,6 +329,7 @@
 
             if (validationResults.length >= (fields.length + groupsLen)) {
                 form.trigger(events.FINISH_FORM_VALIDATION, form);
+
                 if (isFormValid) {
                     form.trigger(events.FORM_VALID, {results: validationResults});
                 } else {
@@ -345,9 +360,11 @@
         form.attr('novalidate', 'novalidate');
 
         $.each(settings.validationEvents, function (name, value) {
+
             if (value) {
                 form.delegate(':input:not(:button,:submit,[data-validator-group],.skip-validation)',
                     name, function (e) {
+
 						// don't validate on tab keyup
 						if (!isAllowedEventValidation(e)) {
 							return;
@@ -356,6 +373,7 @@
                     });
 
                 form.delegate(':input[data-validator-group]', name, function (e) {
+
 					// don't validate on tab keyup
 					if (!isAllowedEventValidation(e)) {
 						return;
