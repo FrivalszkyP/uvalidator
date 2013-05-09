@@ -8,16 +8,16 @@ Validating group of fields as one.
 
 Basic usage after you included the following files:
 
-jquery.uvalidator.js
-jquery.uvalidator.messages.js 
-jquery.uvalidator.rules.js
-jquery.uvalidator.skin.js
-jquery.uvalidator.skin.base.js
+1. jquery.uvalidator.js
+2. jquery.uvalidator.messages.js 
+3. jquery.uvalidator.rules.js
+4. jquery.uvalidator.skin.js
+5. jquery.uvalidator.skin.base.js
 
 ```html
 <form action="" method="" id="Form">
     <div class="control-group">
-        <label for="RequireField>A required field</label>
+        <label for="RequireField">A required field</label>
         <input type="text" name="" value="" id="RequireField" required />
     </div>
 </form>
@@ -65,10 +65,10 @@ It does the same like the one above, but it won't show any error message, becaus
 ## How it works
 
 We can split the validator into 4 modules:
- * core
- * validator methods
- * skin
- * messages
++ core
++ validator methods
++ skin
++ messages
 
 The core module will listen to the events of the form and if the event is enabled for validation it will run the validation methods. The core also uses events to communicate with other code. All events are listed under the $.uvalidator.events namespace.
 
@@ -76,89 +76,135 @@ The core module will listen to the events of the form and if the event is enable
 
 The events listed under the $.uvalidator.events namespace:
 
- * FIELD_VALID: "fieldValid"
- * FIELD_INVALID: "fieldInvalid"
- * FORM_VALID: "formValid"
- * FORM_INVALID: "formInvalid"
- * FINISH_FORM_VALIDATION: "finishFormValidation"
- * START_FORM_VALIDATION: "startFormValidation"
- * FINISH_FIELD_VALIDATION: "finishFieldValidation"
- * START_FIELD_VALIDATION: "startFieldValidation"
++ START_FIELD_VALIDATION: "startFieldValidation"
++ FINISH_FIELD_VALIDATION: "finishFieldValidation"
++ START_FORM_VALIDATION: "startFormValidation"
++ FINISH_FORM_VALIDATION: "finishFormValidation"
++ FIELD_VALID: "fieldValid"
++ FIELD_INVALID: "fieldInvalid"
++ FORM_VALID: "formValid"
++ FORM_INVALID: "formInvalid"
 
 
 ### START_FIELD_VALIDATION
 
-args:
- * field `jQueryObject` Field which going to be validated
+callback arguments:
+
++ field `jQueryObject` Field which going to be validated
 
 It runs right before the field validation starts. Useful for example when you use a AJAX validation to show a loading indicator on the field.
 
-```
-validator.on($.uvalidator.events.START_FIELD_VALIDATION, function () {
+```javascript
+validator.on($.uvalidator.events.START_FIELD_VALIDATION, function (event, field) {
+    $(field).addClass('loading');
 });
 ```
 
-FINISH_FIELD_VALIDATION
+### FINISH_FIELD_VALIDATION
 
-args:
+callback arguments:
+ = field `jQueryObject` Field which has been validated
 
-    field jQueryObject Mezo, ami validalva volt
+It runs right after all of the validation methods ran on the field (ajax validations too). For example you can remove the loading indicator from the field
 
-Azután fut le, miután egy mezőhöz tartozó összes validátor metódus lefutott, így az ajax hivások is. Ha pl használtunk a START_FIELD_VALIDATION-nél leírt módszert, hogy jelezzük, meddig tart a validálás, akkor ennek az eventnek az elsülésekor kell levenni a "loading" class-t.
-START_FORM_VALIDATION
+```javascript
+validator.on($.uvalidator.events.FINISH_FIELD_VALIDATION, function (event, field) {
+    $(field).removeClass('loading');
+});
+```
 
-args:
+### START_FORM_VALIDATION
 
-    form jQueryObject Form, ami validalva lesz
+callback arguments:
 
-Pontosan azelőtt fut le, mielőtt egy teljes form validálás elindulna. Teljes form validáláskor a form összes mezőjét levalidáljuk.
-FINISH_FORM_VALIDATION
++ event 'jQueryEventObject` Standard jquery event object
++ form `HTMLFormElement` The form, which going to be validated
 
-args:
+Runs right before a full form validation starts.
 
-    form jQueryObject Form, ami validalva volt
+```javascript
+validator.on($.uvalidator.events.START_FORM_VALIDATION, function (event, form) {
+    $(form).addClass('loading');
+});
+```
 
-Azután fut le, miután a form összes mezőjének, összes validátor metódusa lefutott, AJAX hívásokkal együtt.
-FIELD_VALID
+### FINISH_FORM_VALIDATION
 
-args:
+callback arguments:
 
-    result Object
-        isGroup Boolean True, ha a mező egy csoporthoz tartozik ezért groupValidatorok futottak rá
-        isValid Boolean True, ha a mező valid
-        validator String utolsó validátor method neve (hasznos, ha a mező invalid, mert innen lehet tudni, hogy melyik validátor method szerint invalid a mező)
++ event 'jQueryEventObject` Standard jquery event object
++ form `HTMLFormElement` The form, which has been validated
 
-Miután egy mező összes validátora lefutott és mind úgy találta, hogy a mező valid, ez az event fog lefutni. Az event használatával jelölhetjük pl. egy "valid" class ráadásával, hogy a mező valid.
-FIELD_INVALID
+Called right after all field has been validated in the form (including ajax calls).
 
-    result Object
-        field jQueryObject Validált mező jQuery objectként
-        isGroup Boolean True, ha a mező egy csoporthoz tartozik ezért groupValidatorok futottak rá
-        isValid Boolean True, ha a mező valid
-        validator String utolsó validátor method neve (hasznos, ha a mező invalid, mert innen lehet tudni, hogy melyik validátor method szerint invalid a mező)
+```javascript
+validator.on($.uvalidator.events.FINISH_FORM_VALIDATION, function (event, form) {
+    $(form).removeClass('loading');
+});
+```
 
-Miután egy mező egy validátora úgy találja, hogy valami nincs rendben az értékkel, ez az event fog elsülni.
-FORM_VALID
+### FIELD_VALID
 
-args:
+callback arguments:
 
-    validationResults Array** field jQueryObject Validált mező jQuery objectként
-        isGroup Boolean True, ha a mező egy csoporthoz tartozik ezért groupValidatorok futottak rá
-        isValid Boolean True, ha a mező valid
-        validator String utolsó validátor method neve (hasznos, ha a mező invalid, mert innen lehet tudni, hogy melyik validátor method szerint invalid a mező)
++ event 'jQueryEventObject` Standard jquery event object
++ result Object
+    - field `jQueryObject` The field, which has been validated
+    - isGroup `Boolean` True, if the field belongs to a group, so only groupValidation methods were running
+    - isValid `Boolean` True, if the field is valid
+    - validator `String` Name of the validator which has been called last time. (Mostly useful in invalid callback, but for the consistency it passed here too).
 
-Akkor sül el ez az event, miutan az osszes mezo validatora lefutott es minden mezo validnak bizonyult.
-FORM_INVALID
+Called when all validation ran for a field and all validation passed. For example using that event you can mark that the field is valid.
 
-args:
+```javascript
+validator.on($.uvalidator.events.FINISH_FORM_VALIDATION, function (event, result) {
+    $(form).removeClass('loading');
+});
+```
+When all validation ran for the field and all found out that the field is valid, the FIELD_VALID event will be triggered. You can use this event for example to mark if a field is valid adding a class to it.
 
-    validationResults Array** field jQueryObject Validált mező jQuery objectként
-        isGroup Boolean True, ha a mező egy csoporthoz tartozik ezért groupValidatorok futottak rá
-        isValid Boolean True, ha a mező valid
-        validator String utolsó validátor method neve (hasznos, ha a mező invalid, mert innen lehet tudni, hogy melyik validátor method szerint invalid a mező)
-    errors Array** field jQueryObject Validált mező jQuery objectként
-        isGroup Boolean True, ha a mező egy csoporthoz tartozik ezért groupValidatorok futottak rá
-        isValid Boolean True, ha a mező valid
-        validator String utolsó validátor method neve (hasznos, ha a mező invalid, mert innen lehet tudni, hogy melyik validátor method szerint invalid a mező)
+```javascript
+validator.on($.uvalidator.events.FIELD_VALID, function (event, result) {
+    result.field.addClass('valid');
+});
+```
 
-Akkor sül el ez az event, miutan az osszes mezo validatora lefutott es legalabb egy mezo invalidnak bizonyult.
+### FIELD_INVALID
+
+callback arguments:
+
++ event 'jQueryEventObject` Standard jquery event object
++ result Object
+    - field `jQueryObject` The field, which has been validated
+    - isGroup `Boolean` True, if the field belongs to a group, so only groupValidation methods were running
+    - isValid `Boolean` True, if the field is valid
+    - validator `String` Name of the validator which has been called last time. Pretty useful if field is invalid, because you use this name to display a proper error message.
+
+When one of the validators of the field founds that something is wrong with the value of the field, the FIELD_INVALID event will be triggered.
+```javascript
+validator.on($.uvalidator.events.FIELD_INVALID, function (event, result) {
+    result.field.addClass('invalid');
+});
+```
+### FORM_VALID
+
+callback arguments:
+
++ event 'jQueryEventObject` Standard jquery event object
++ validationResults 
+    - results `Array` Result object array, see FIELD_VALID event for result object structure.
+
+The event triggered when all validator of all fields ran and all field is valid.
+
+### FORM_INVALID
+
+callback arguments:
+
++ event 'jQueryEventObject` Standard jquery event object
++ result Object
+    - field `jQueryObject` The field, which has been validated
+    - isGroup `Boolean` True, if the field belongs to a group, so only groupValidation methods were running
+    - isValid `Boolean` True, if the field is valid
+    - validator `String` Name of the validator which has been called last time. Pretty useful if field is invalid, because you use this name to display a proper error message.
+
+The event triggered when all validator of all fields ran and at lease one field was invalid.
