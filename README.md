@@ -1,10 +1,12 @@
 # Ustream jQuery form validator plugin (uvalidator)
 
-Separate validation from displaying and handling errors.
-Asynchronous validation support (ajax calls).
-Pluggable validation methods.
-Skin support.
-Validating group of fields as one.
+* Separate validation from displaying and handling errors.
+* Asynchronous validation support (ajax calls).
+* Pluggable validation methods.
+* Skin support.
+* Validating group of fields as one.
+
+## Usage
 
 Basic usage after you included the following files:
 
@@ -62,6 +64,16 @@ form.on(events.FORM_VALID, function () {
 
 It does the same like the one above, but it won't show any error message, because here we didn't use any skin.
 
+### Available options
+
++ validationEvents `Object`
+    - focusout `Boolean`, default: `false`
+    - focusin `Boolean`, default: `false`
+    - change `Boolean`, default: `true`
+    - keyup `Boolean`, default: `true`
+    - click `Boolean`, default: `false`
+    - submit `Boolean`, default: `true`
+
 ## How it works
 
 We can split the validator into 4 modules:
@@ -76,15 +88,16 @@ The core module will listen to the events of the form and if the event is enable
 
 The events listed under the $.uvalidator.events namespace:
 
-+ START_FIELD_VALIDATION: "startFieldValidation"
-+ FINISH_FIELD_VALIDATION: "finishFieldValidation"
-+ START_FORM_VALIDATION: "startFormValidation"
-+ FINISH_FORM_VALIDATION: "finishFormValidation"
-+ FIELD_VALID: "fieldValid"
-+ FIELD_INVALID: "fieldInvalid"
-+ FORM_VALID: "formValid"
-+ FORM_INVALID: "formInvalid"
++ START_FIELD_VALIDATION
++ FINISH_FIELD_VALIDATION
++ START_FORM_VALIDATION
++ FINISH_FORM_VALIDATION
++ FIELD_VALID
++ FIELD_INVALID
++ FORM_VALID
++ FORM_INVALID
 
+You can access to them like this: `$.uvalidator.START_FIELD_VALIDATION`
 
 ### START_FIELD_VALIDATION
 
@@ -526,9 +539,41 @@ Not more and not less than two inputs must belong to a group. Each input must ha
 <input type="text" name="year" value="" class="cc-expiration" "data-validator-ccexp="year" data-validator-group="cc-expiration-date" />
 ```
 
+### Defining validator methods
+
+You can see examples in the jquery.uvalidator.rules.js file, but here is a simple one, which checks if the entered value is a alphanumeric or not:
+
+```javascript
+$.uvalidator.addMethod(
+    // defining the selector, to know which elements must be validated with this method
+    '.alphanumeric',
+    // defining the name of the validator
+    'alphanumeric',
+    // defining the validator method
+    function (value, element, callback) {
+        // If the field is not required, empty value is allowed;
+        var valid = $.uvalidator.isOptional(element, value);
+
+        // if filled, check for if matches with the regexp
+        if (!valid) {
+            valid = /[a-z0-9]/i.test(value);
+        }
+
+        // call the callback with the validation result
+        callback(valid);
+    }
+);
+```
+
+The HTML code to use this validator method:
+
+```html
+<input type="text" name="name" value="" class="alphanumeric" />
+```
+
 ## TODO
 
-These inconsitencies or strange behaviours found:
+These inconsitencies or strange behaviours found so far:
 
 * Fix min and max validators
 * General required group validator
