@@ -27,8 +27,10 @@ Basic usage after you included the following files:
 
 ```javascript
 var form, events, validator;
+
 form = $("#Form");
 events = $.uvalidator.events;
+
 validator = $.uvalidatorApplySkin("base", form, {
     // validation events when should validate
     validationEvents: {
@@ -36,6 +38,7 @@ validator = $.uvalidatorApplySkin("base", form, {
         submit: true // submit event of the form
     }
 });
+
 // catch the FORM_VALID event, which is fired after all validation ran on the
 // form and all returned that the fields are valid.
 validator.on(events.FORM_VALID, function () {
@@ -49,14 +52,17 @@ If you don't want to use any skin, just call the `uvalidator` method on the form
 
 ```javascript
 var form, events, validator;
+
 form = $("#Form");
 events = $.uvalidator.events;
+
 form.uvalidator({
     validationEvents: {
         change: true,
         submit: true
     }
 });
+
 form.on(events.FORM_VALID, function () {
     form[0].submit();
 });
@@ -552,6 +558,7 @@ $.uvalidator.addMethod(
     // defining the validator method
     function (value, element, callback) {
         // If the field is not required, empty value is allowed;
+        // $.uvalidator.isOptional is only available if the `jquery.uvalidator.rules.js` is included
         var valid = $.uvalidator.isOptional(element, value);
 
         // if filled, check for if matches with the regexp
@@ -570,6 +577,58 @@ The HTML code to use this validator method:
 ```html
 <input type="text" name="name" value="" class="alphanumeric" />
 ```
+
+## Skins
+
+When you validate a form, you probably want to show the validation results somehow. The way how you would display error messages can be different on every site. So the plugin itself doesn't show any error messages, instead of it makes it easy to be notified about errors and you can decide it how to display the error.
+
+We have built a helper which makes it easier to create your own skin.
+
+To create a new skin, call the `$.uvalidatorSkin` method.
+
+```javascript
+$.uvalidatorSkin('skin-name', {
+        // here you must define your skin behavior
+});
+```
+
+You can apply the newly created skin on a form by calling the `$.uvalidatorApplySkin('skin-name', $('#Form'))`.
+
+There are a bunch of predefined methods what you can use to define the behavior of your skin:
+
+__showFieldError__
+Must append and display the error message for a field.
+
+__setFieldInvalid__
+Must add styles to mark somehow that the field is invalid.
+
+__setFieldValid__
+Must add styles to mark somehow that the field is valid.
+
+__hideFieldError__
+Removes/hides error message of a field.
+
+__onFieldValidationStart__
+Marks a field that validation is in progress on it.
+
+__onFieldValidationFinish__
+Removes the mark of the field which shows that validation is in progress.
+
+__onFormValidationStart__
+Marks that the form validation is in progress.
+
+__onFormValidationFinish__
+Removes the mark of form which shows that the form validation is in progress.
+
+__onFormValid__
+Callback, which called when form valid event triggereed.
+
+__onFormInvalid__
+Callback, which called when form invalid event triggereed.
+
+### Skin helpers
+
+You can build your own skin handler by subscribing to the events, check the `jquery.uvalidator.skin.js` for ideas.
 
 ## TODO
 

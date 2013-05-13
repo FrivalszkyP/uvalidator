@@ -148,29 +148,88 @@ SOFTWARE.
             }
             return msg;
         },
+        /**
+         * Hides all error messages on the form
+         * @method hideAllError
+         */
         hideAllError: function () {
-            $(':input').each($.proxy(function (index, field) {
+            this.form.find(':input').each($.proxy(function (index, field) {
                 this.setFieldValid(field);
                 this.hideFieldError(field);
             }, this));
         },
+        /**
+         * Callback of the FIELD_VALID event, hides the errors and sets field
+         * valid.
+         * @method onFieldValid
+         * @param {jQueryEvent} fieldValidEvent
+         * @param {Object} args Result object
+         */
         onFieldValid: function (fieldValidEvent, args) {
             this.setFieldValid(fieldValidEvent.target, args);
             this.hideFieldError(fieldValidEvent.target, args);
         },
+        /**
+         * Callback of the FIELD_INVALID event, sets field invalid and shows
+         * error message.
+         * @method onFieldValid
+         * @param {jQueryEvent} fieldValidEvent
+         * @param {Object} args Result object
+         */
         onFieldInvalid: function (fieldInvalidEvent, args) {
             this.setFieldInvalid(fieldInvalidEvent.target, args);
             this.showFieldError(fieldInvalidEvent.target, args);
         },
+        /**
+         * Must append and display the error message for a field
+         * @method showFieldError
+         */
         showFieldError: function () {},
+        /**
+         * Must add styles to show marker that the field is invalid
+         * @method setFieldInvalid
+         */
         setFieldInvalid: function () {},
+        /**
+         * Must add styles to show marker that the field is valid
+         * @method setFieldValid
+         */
         setFieldValid: function () {},
+        /**
+         * Removes/hides error message of a field
+         * @method onFieldValidationStart
+         * @method hideFieldError
+         */
         hideFieldError: function () {},
+        /**
+         * Marks a field that validation is in progress on it
+         * @method onFieldValidationStart
+         */
         onFieldValidationStart: function () {},
+        /**
+         * Removes the mark of the field which shows that validation is in progress.
+         * @method onFieldValidationFinish
+         */
         onFieldValidationFinish: function () {},
+        /**
+         * Marks that the form validation is in progress
+         * @method onFormValidationStart
+         */
         onFormValidationStart: function () {},
+        /**
+         * Removes the mark of form which shows that the form validation is in progress.
+         * @method onFormValidationFinish
+         */
         onFormValidationFinish: function () {},
+        /**
+         * Callback, which called when form valid event triggereed.
+         * @method onFormValid
+         */
         onFormValid: function () {},
+        /**
+         * Callback, which called when form invalid event triggereed.
+         * @method onFormInvalid
+         */
         onFormInvalid: function () {}
     };
     function createSkin(name, proto) {
