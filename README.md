@@ -578,6 +578,53 @@ The HTML code to use this validator method:
 <input type="text" name="name" value="" class="alphanumeric" />
 ```
 
+### Defining group validator method
+
+When you want to validate two or more fields as one, you will need to define validator method. A good example is the credit card expiration date.
+
+```javascript
+// use the addGroupMethod to define group validator
+$.uvalidator.addGroupMethod(
+    // defining the selector, to know which elements must be validated with this method
+    ':input[data-validator-type="date"].cc-expiration',
+    // name of the validator method
+    'expiration-date',
+    // the validator function
+    function (value, items, callback) {
+        // getting the year field
+        var year = items.filter('[data-validator-ccexp="year"]'),
+        // getting the month field
+            month = items.filter('[data-validator-ccexp="month"]'),
+            yearVal = year.val(),
+            // zeroPad is defined earlier, converts 5 to 05, 6 to 06 and so on
+            monthVal = zeroPad(month.val(), 2),
+            now = new Date(),
+            thisYear,
+            thisMonth,
+            isValid;
+
+        thisYear = String(now.getFullYear());
+        thisMonth = zeroPad(now.getMonth() + 1, 2);
+
+        if (yearVal.length === 2) {
+            thisYear = thisYear.slice(-2);
+        }
+
+        // the callback must be called with one boolean argument, which should
+        // be true if the fields are valid.
+        callback(+(thisYear + thisMonth) <= +(yearVal + monthVal));
+    }
+);
+```
+
+The HTML code to use this validator method:
+
+```html
+<input type="text" name="month" class="cc-expiration" data-validator-group="expiration-date" data-validator-ccexp="month" value="" />
+<input type="text" name="year" class="cc-expiration" data-validator-group="expiration-date" data-validator-ccexp="year" value="" />
+```
+
+
 ## Skins
 
 When you validate a form, you probably want to show the validation results somehow. The way how you would display error messages can be different on every site. So the plugin itself doesn't show any error messages, instead of it makes it easy to be notified about errors and you can decide it how to display the error.
@@ -635,4 +682,4 @@ You can build your own skin handler by subscribing to the events, check the `jqu
 These inconsitencies or strange behaviours found so far:
 
 * Fix min and max validators
-* General required group validator
+* More general required group validator
