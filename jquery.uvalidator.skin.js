@@ -279,4 +279,32 @@ SOFTWARE.
 			messages[msg[0]] = msg[1];
 		}
 	};
+
+
+	/**
+	 * Method to create a string where placeholders could be defined which
+	 * could be replaced to other values.
+	 * The first argument must be the string with placeholders. The placeholder
+	 * should be a number which should be wrapped into {} pair.
+	 * Example: $.uvalidatorSkin.format('foo {0} baz {1}', 'bar', 'qux');
+	 * @method format
+	 * @param {String} source
+	 * @param {*} values to	insert into source
+	 * @returns {String} The source string but the placeholders are replaced.
+	 */
+	$.uvalidatorSkin.format =  function () {
+		var args = Array.prototype.slice.call(arguments),
+			str = args.shift();
+
+		return str.replace(/\{[0-9]+\}/g, function (match) {
+			var output = args[match.slice(1, match.indexOf('}'))];
+
+			if (typeof output === 'undefined') {
+				output = match;
+			}
+
+			return output;
+		});
+	};
+
 }(window.jQuery));
