@@ -675,7 +675,19 @@ Callback, which called when form invalid event triggereed.
 
 ### Skin helpers
 
-You can build your own skin handler by subscribing to the events, check the `jquery.uvalidator.skin.js` for ideas.
+#### $.uvalidatorSkin.format
+
+Method to create a string where placeholders could be defined which then could
+be replaced to other values.
+The first argument must be the string with placeholders. The placeholder
+should be a number which should be wrapped into {} pair.
+It could be useful when you want to add custom error messages.
+
+```javascript
+$.uvalidatorSkin.format('foo {0} baz {1}', 'bar', 'qux'); // returns "foo bar baz qux"
+```
+
+_To build your own skin handler, you only need to subscribe to the events of the validator. Check the `jquery.uvalidator.skin.js` for ideas._
 
 ## TODO
 
