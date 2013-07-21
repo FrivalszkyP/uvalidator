@@ -1,10 +1,9 @@
-/*jslint browser:true*/
+/*jslint browser: true, white: true*/
 (function ($) {
 	"use strict";
 	var defaults,
 		events,
-		validatorManager,
-		dbg;
+		validatorManager;
 
 	/**
 	 * Default settings
@@ -63,12 +62,6 @@
 		START_FIELD_VALIDATION: 'startFieldValidation'
 	};
 
-	if (window.console) {
-		dbg = window.console.log;
-	} else {
-		dbg = function () {};
-	}
-
 	validatorManager = (function () {
 		var validators = [],
 			validatorsByName = {},
@@ -119,9 +112,9 @@
 				if (index > -1) {
 					validator = isGroup ? groupValidators[index] : validators[index];
 				}
+
 				return validator;
 			},
-
 
 			addValidatorMethod: function addValidatorMethod(selector, name, fn) {
 				var currentIndex, index, validatorObject;
@@ -135,6 +128,7 @@
 				validatorsByName[name] = index;
 				validators[index] = validatorObject;
 			},
+
 			addValidatorGroupMethod: function (selector, name, fn) {
 				var currentIndex, index, validatorObject;
 
@@ -147,6 +141,7 @@
 				groupValidatorsByName[name] = index;
 				groupValidators[index] = validatorObject;
 			},
+
 			len: function (isGroup) {
 				return isGroup ? groupValidators.length : validators.length;
 			}
@@ -281,6 +276,7 @@
 			// on keyup event don't allow to validate if user presses these
 			// buttons
 			// I would use switch/case but jsperf says it's the slowest way to do the comparisons.
+			// 9: tab, 16: shift, 17: ctrl, 18: alt
 			if (which === 9 || which === 16 || which === 17 || which === 18) {
 				output = false;
 			}
@@ -333,12 +329,14 @@
 				if (isFormValid) {
 					form.trigger(events.FORM_VALID, {results: validationResults});
 				} else {
+					/*jslint unparam: true*/
 					form.trigger(events.FORM_INVALID, {
 						results: validationResults,
 						errors: $.makeArray($(validationResults).filter(function (index, item) {
 							return !item.isValid;
 						}))
 					});
+					/*jslint unparam: false*/
 				}
 
 			}
@@ -348,29 +346,28 @@
 		fields.each(function () {
 			validateField(this, onValidate, false);
 		});
+		/*jslint unparam: true*/
 		$.each(groups, function (group, items) {
 			validateField(items, onValidate, true);
 		});
+		/*jslint unparam: false*/
 	}
 
 	function bindDelegation(form, settings) {
-		var validationEvents;
-
 		form = $(form);
 		form.attr('novalidate', 'novalidate');
 
 		$.each(settings.validationEvents, function (name, value) {
 
 			if (value) {
-				form.delegate(':input:not(:button,:submit,[data-validator-group],.skip-validation)',
-					name, function (e) {
+				form.delegate(':input:not(:button,:submit,[data-validator-group],.skip-validation)', name, function (e) {
 
-						// don't validate on tab keyup
-						if (!isAllowedEventValidation(e)) {
-							return;
-						}
-						validateField(e.target, triggerFieldEvents, false);
-					});
+					// don't validate on tab keyup
+					if (!isAllowedEventValidation(e)) {
+						return;
+					}
+					validateField(e.target, triggerFieldEvents, false);
+				});
 
 				form.delegate(':input[data-validator-group]', name, function (e) {
 
@@ -398,7 +395,7 @@
 	function UValidator(options) {
 		var settings = $.extend({}, defaults, options);
 
-		return this.each(function (form) {
+		return this.each(function () {
 			bindDelegation(this, settings);
 		});
 	}
