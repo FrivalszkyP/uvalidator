@@ -18,10 +18,10 @@ Basic usage after you included the following files:
 
 ```html
 <form action="" method="" id="Form">
-    <div class="control-group">
-        <label for="RequireField">A required field</label>
-        <input type="text" name="" value="" id="RequireField" required />
-    </div>
+	<div class="control-group">
+		<label for="RequireField">A required field</label>
+		<input type="text" name="" value="" id="RequireField" required />
+	</div>
 </form>
 ```
 
@@ -32,17 +32,17 @@ form = $("#Form");
 events = $.uvalidator.events;
 
 validator = $.uvalidatorApplySkin("base", form, {
-    // validation events when should validate
-    validationEvents: {
-        change: true, // change event on fields
-        submit: true // submit event of the form
-    }
+	// validation events when should validate
+	validationEvents: {
+		change: true, // change event on fields
+		submit: true // submit event of the form
+	}
 });
 
 // catch the FORM_VALID event, which is fired after all validation ran on the
 // form and all returned that the fields are valid.
 validator.on(events.FORM_VALID, function () {
-    form[0].submit();
+	form[0].submit();
 });
 ```
 
@@ -57,14 +57,14 @@ form = $("#Form");
 events = $.uvalidator.events;
 
 form.uvalidator({
-    validationEvents: {
-        change: true,
-        submit: true
-    }
+	validationEvents: {
+		change: true,
+		submit: true
+	}
 });
 
 form.on(events.FORM_VALID, function () {
-    form[0].submit();
+	form[0].submit();
 });
 ```
 
@@ -73,12 +73,12 @@ It does the same like the one above, but it won't show any error message, becaus
 ### Available options
 
 + validationEvents `Object`
-    - focusout `Boolean`, default: `false`
-    - focusin `Boolean`, default: `false`
-    - change `Boolean`, default: `true`
-    - keyup `Boolean`, default: `true`
-    - click `Boolean`, default: `false`
-    - submit `Boolean`, default: `true`
+	- focusout `Boolean`, default: `false`
+	- focusin `Boolean`, default: `false`
+	- change `Boolean`, default: `true`
+	- keyup `Boolean`, default: `true`
+	- click `Boolean`, default: `false`
+	- submit `Boolean`, default: `true`
 
 ## How it works
 
@@ -115,7 +115,7 @@ It runs right before the field validation starts. Useful for example when you us
 
 ```javascript
 validator.on($.uvalidator.events.START_FIELD_VALIDATION, function (event, field) {
-    $(field).addClass('loading');
+	$(field).addClass('loading');
 });
 ```
 
@@ -128,7 +128,7 @@ It runs right after all of the validation methods ran on the field (ajax validat
 
 ```javascript
 validator.on($.uvalidator.events.FINISH_FIELD_VALIDATION, function (event, field) {
-    $(field).removeClass('loading');
+	$(field).removeClass('loading');
 });
 ```
 
@@ -143,7 +143,7 @@ Runs right before a full form validation starts.
 
 ```javascript
 validator.on($.uvalidator.events.START_FORM_VALIDATION, function (event, form) {
-    $(form).addClass('loading');
+	$(form).addClass('loading');
 });
 ```
 
@@ -158,7 +158,7 @@ Called right after all field has been validated in the form (including ajax call
 
 ```javascript
 validator.on($.uvalidator.events.FINISH_FORM_VALIDATION, function (event, form) {
-    $(form).removeClass('loading');
+	$(form).removeClass('loading');
 });
 ```
 
@@ -168,23 +168,23 @@ callback arguments:
 
 + event 'jQueryEventObject` Standard jquery event object
 + result Object
-    - field `jQueryObject` The field, which has been validated
-    - isGroup `Boolean` True, if the field belongs to a group, so only groupValidation methods were running
-    - isValid `Boolean` True, if the field is valid
-    - validator `String` Name of the validator which has been called last time. (Mostly useful in invalid callback, but for the consistency it passed here too).
+	- field `jQueryObject` The field, which has been validated
+	- isGroup `Boolean` True, if the field belongs to a group, so only groupValidation methods were running
+	- isValid `Boolean` True, if the field is valid
+	- validator `String` Name of the validator which has been called last time. (Mostly useful in invalid callback, but for the consistency it passed here too).
 
 Called when all validation ran for a field and all validation passed. For example using that event you can mark that the field is valid.
 
 ```javascript
 validator.on($.uvalidator.events.FINISH_FORM_VALIDATION, function (event, result) {
-    $(form).removeClass('loading');
+	$(form).removeClass('loading');
 });
 ```
 When all validation ran for the field and all found out that the field is valid, the FIELD_VALID event will be triggered. You can use this event for example to mark if a field is valid adding a class to it.
 
 ```javascript
 validator.on($.uvalidator.events.FIELD_VALID, function (event, result) {
-    result.field.addClass('valid');
+	result.field.addClass('valid');
 });
 ```
 
@@ -194,15 +194,15 @@ callback arguments:
 
 + event 'jQueryEventObject` Standard jquery event object
 + result Object
-    - field `jQueryObject` The field, which has been validated
-    - isGroup `Boolean` True, if the field belongs to a group, so only groupValidation methods were running
-    - isValid `Boolean` True, if the field is valid
-    - validator `String` Name of the validator which has been called last time. Pretty useful if field is invalid, because you use this name to display a proper error message.
+	- field `jQueryObject` The field, which has been validated
+	- isGroup `Boolean` True, if the field belongs to a group, so only groupValidation methods were running
+	- isValid `Boolean` True, if the field is valid
+	- validator `String` Name of the validator which has been called last time. Pretty useful if field is invalid, because you use this name to display a proper error message.
 
 When one of the validators of the field founds that something is wrong with the value of the field, the FIELD_INVALID event will be triggered.
 ```javascript
 validator.on($.uvalidator.events.FIELD_INVALID, function (event, result) {
-    result.field.addClass('invalid');
+	result.field.addClass('invalid');
 });
 ```
 ### FORM_VALID
@@ -211,7 +211,7 @@ callback arguments:
 
 + event 'jQueryEventObject` Standard jquery event object
 + validationResults 
-    - results `Array` Result object array, see FIELD_VALID event for result object structure.
+	- results `Array` Result object array, see FIELD_VALID event for result object structure.
 
 The event triggered when all validator of all fields ran and all field is valid.
 
@@ -221,10 +221,10 @@ callback arguments:
 
 + event 'jQueryEventObject` Standard jquery event object
 + result Object
-    - field `jQueryObject` The field, which has been validated
-    - isGroup `Boolean` True, if the field belongs to a group, so only groupValidation methods were running
-    - isValid `Boolean` True, if the field is valid
-    - validator `String` Name of the validator which has been called last time. Pretty useful if field is invalid, because you use this name to display a proper error message.
+	- field `jQueryObject` The field, which has been validated
+	- isGroup `Boolean` True, if the field belongs to a group, so only groupValidation methods were running
+	- isValid `Boolean` True, if the field is valid
+	- validator `String` Name of the validator which has been called last time. Pretty useful if field is invalid, because you use this name to display a proper error message.
 
 The event triggered when all validator of all fields ran and at lease one field was invalid.
 
@@ -551,24 +551,24 @@ You can see examples in the jquery.uvalidator.rules.js file, but here is a simpl
 
 ```javascript
 $.uvalidator.addMethod(
-    // defining the selector, to know which elements must be validated with this method
-    '.alphanumeric',
-    // defining the name of the validator
-    'alphanumeric',
-    // defining the validator method
-    function (value, element, callback) {
-        // If the field is not required, empty value is allowed;
-        // $.uvalidator.isOptional is only available if the `jquery.uvalidator.rules.js` is included
-        var valid = $.uvalidator.isOptional(element, value);
+	// defining the selector, to know which elements must be validated with this method
+	'.alphanumeric',
+	// defining the name of the validator
+	'alphanumeric',
+	// defining the validator method
+	function (value, element, callback) {
+		// If the field is not required, empty value is allowed;
+		// $.uvalidator.isOptional is only available if the `jquery.uvalidator.rules.js` is included
+		var valid = $.uvalidator.isOptional(element, value);
 
-        // if filled, check for if matches with the regexp
-        if (!valid) {
-            valid = /[a-z0-9]/i.test(value);
-        }
+		// if filled, check for if matches with the regexp
+		if (!valid) {
+			valid = /[a-z0-9]/i.test(value);
+		}
 
-        // call the callback with the validation result
-        callback(valid);
-    }
+		// call the callback with the validation result
+		callback(valid);
+	}
 );
 ```
 
@@ -585,35 +585,35 @@ When you want to validate two or more fields as one, you will need to define val
 ```javascript
 // use the addGroupMethod to define group validator
 $.uvalidator.addGroupMethod(
-    // defining the selector, to know which elements must be validated with this method
-    ':input[data-validator-type="date"].cc-expiration',
-    // name of the validator method
-    'expiration-date',
-    // the validator function
-    function (value, items, callback) {
-        // getting the year field
-        var year = items.filter('[data-validator-ccexp="year"]'),
-        // getting the month field
-            month = items.filter('[data-validator-ccexp="month"]'),
-            yearVal = year.val(),
-            // zeroPad is defined earlier, converts 5 to 05, 6 to 06 and so on
-            monthVal = zeroPad(month.val(), 2),
-            now = new Date(),
-            thisYear,
-            thisMonth,
-            isValid;
+	// defining the selector, to know which elements must be validated with this method
+	':input[data-validator-type="date"].cc-expiration',
+	// name of the validator method
+	'expiration-date',
+	// the validator function
+	function (value, items, callback) {
+		// getting the year field
+		var year = items.filter('[data-validator-ccexp="year"]'),
+		// getting the month field
+			month = items.filter('[data-validator-ccexp="month"]'),
+			yearVal = year.val(),
+			// zeroPad is defined earlier, converts 5 to 05, 6 to 06 and so on
+			monthVal = zeroPad(month.val(), 2),
+			now = new Date(),
+			thisYear,
+			thisMonth,
+			isValid;
 
-        thisYear = String(now.getFullYear());
-        thisMonth = zeroPad(now.getMonth() + 1, 2);
+		thisYear = String(now.getFullYear());
+		thisMonth = zeroPad(now.getMonth() + 1, 2);
 
-        if (yearVal.length === 2) {
-            thisYear = thisYear.slice(-2);
-        }
+		if (yearVal.length === 2) {
+			thisYear = thisYear.slice(-2);
+		}
 
-        // the callback must be called with one boolean argument, which should
-        // be true if the fields are valid.
-        callback(+(thisYear + thisMonth) <= +(yearVal + monthVal));
-    }
+		// the callback must be called with one boolean argument, which should
+		// be true if the fields are valid.
+		callback(+(thisYear + thisMonth) <= +(yearVal + monthVal));
+	}
 );
 ```
 
@@ -635,7 +635,7 @@ To create a new skin, call the `$.uvalidatorSkin` method.
 
 ```javascript
 $.uvalidatorSkin('skin-name', {
-        // here you must define your skin behavior
+		// here you must define your skin behavior
 });
 ```
 
