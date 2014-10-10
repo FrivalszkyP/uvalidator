@@ -287,11 +287,11 @@
 	function validateForm(form) {
 		var validationResults, isFormValid, fields, groupFields, groups, groupsLen;
 
-		fields = form.find(':input');
+		fields = form.find(':input').not('.skip-validation');
 
 		groupFields = fields.filter('[data-validator-group]');
 
-		fields = fields.not('[data-validator-group],:button,:submit,.skip-validation');
+		fields = fields.not('[data-validator-group],:button,:submit');
 
 		groups = {};
 		groupsLen = 0;
