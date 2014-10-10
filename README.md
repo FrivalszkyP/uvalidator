@@ -691,14 +691,8 @@ _To build your own skin handler, you only need to subscribe to the events of the
 
 ## Running tests
 
-Install grover:
-
 ```sh
-npm install -g grover
-```
-
-```sh
-grover tests/*.html
+npm test
 ```
 
 ## TODO
