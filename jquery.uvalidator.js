@@ -358,19 +358,17 @@
 		form.attr('novalidate', 'novalidate');
 
 		$.each(settings.validationEvents, function (name, value) {
-
 			if (value) {
-				form.delegate(':input:not(:button,:submit,[data-validator-group],.skip-validation)', name, function (e) {
-
-					// don't validate on tab keyup
-					if (!isAllowedEventValidation(e)) {
-						return;
-					}
-					validateField(e.target, triggerFieldEvents, false);
-				});
+				form.delegate(':input:not(:button,:submit,[data-validator-group],.skip-validation)',
+					name, function (e) {
+						// don't validate on tab keyup
+						if (!isAllowedEventValidation(e)) {
+							return;
+						}
+						validateField(e.target, triggerFieldEvents, false, form);
+					});
 
 				form.delegate(':input[data-validator-group]', name, function (e) {
-
 					// don't validate on tab keyup
 					if (!isAllowedEventValidation(e)) {
 						return;
