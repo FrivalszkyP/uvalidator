@@ -1,6 +1,6 @@
 /*jslint browser: true, white: true*/
 (function ($) {
-	"use strict";
+	'use strict';
 	var defaults,
 		events,
 		validatorManager;
@@ -220,7 +220,7 @@
 			while (index < vl && isValid) {
 				validator = validatorManager.getValidatorByIndex(index, isGroup);
 				if (field.is(validator.selector)) {
-					validator.fn(value, field, getOnValidate(validator, validate));
+					validator.fn.call(form, value, field, getOnValidate(validator, validate));
 				} else {
 					validated += 1;
 					if (validated >= vl) {
@@ -400,7 +400,7 @@
 			$.uvalidator.fieldIsValid(field, function (result, field) {
 				triggerFieldEvents(result, field);
 				callback && callback(result, field);
-			}, conf);
+			}, conf, form);
 		},
 		validateWith: function (field, method, callback, form) {
 			var isGroup = field.is('[data-validator-group]');
