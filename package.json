@@ -1,7 +1,11 @@
 {
   "name": "uvalidator",
-  "version": "0.2.0",
+  "version": "0.2.1",
+  "scripts": {
+	  "test": "node_modules/grover/bin/grover.js tests/*.html"
+  },
   "devDependencies": {
+    "grover": "^0.1.17",
     "grunt": "~0.4.1",
     "grunt-jslint": "~0.2.5"
   }
