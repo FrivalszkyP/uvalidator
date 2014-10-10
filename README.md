@@ -689,6 +689,18 @@ $.uvalidatorSkin.format('foo {0} baz {1}', 'bar', 'qux'); // returns "foo bar ba
 
 _To build your own skin handler, you only need to subscribe to the events of the validator. Check the `jquery.uvalidator.skin.js` for ideas._
 
+## Running tests
+
+Install grover:
+
+```sh
+npm install -g grover
+```
+
+```sh
+grover tests/*.html
+```
+
 ## TODO
 
 These inconsitencies or strange behaviours found so far:

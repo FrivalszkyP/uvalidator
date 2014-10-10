@@ -330,9 +330,11 @@
 		fields.each(function () {
 			validateField(this, onValidate, false, form);
 		});
+		/*jslint unparam: true*/
 		$.each(groups, function (group, items) {
 			validateField(items, onValidate, true, form);
 		});
+		/*jslint unparam: false*/
 	}
 
 	function bindDelegation(form, settings) {
@@ -399,7 +401,7 @@
 		validateField: function (field, callback, conf, form) {
 			$.uvalidator.fieldIsValid(field, function (result, field) {
 				triggerFieldEvents(result, field);
-				callback && callback(result, field);
+				return callback && callback(result, field);
 			}, conf, form);
 		},
 		validateWith: function (field, method, callback, form) {
