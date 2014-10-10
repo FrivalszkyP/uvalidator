@@ -91,7 +91,6 @@
 			getValidatorIndexByName: function getValidatorIndexByName(name, isGroup) {
 				var index = -1,
 					byName = isGroup ? groupValidatorsByName : validatorsByName;
-
 				if (typeof byName[name] === 'number') {
 					index = byName[name];
 				}
@@ -112,7 +111,6 @@
 				if (index > -1) {
 					validator = isGroup ? groupValidators[index] : validators[index];
 				}
-
 				return validator;
 			},
 
@@ -128,7 +126,6 @@
 				validatorsByName[name] = index;
 				validators[index] = validatorObject;
 			},
-
 			addValidatorGroupMethod: function (selector, name, fn) {
 				var currentIndex, index, validatorObject;
 
@@ -141,7 +138,6 @@
 				groupValidatorsByName[name] = index;
 				groupValidators[index] = validatorObject;
 			},
-
 			len: function (isGroup) {
 				return isGroup ? groupValidators.length : validators.length;
 			}
@@ -178,7 +174,6 @@
 		isValid = true;
 		callbackCalled = false;
 		vl = validatorManager.len(isGroup);
-
 		if (!isGroup) {
 			value = getFieldValue(field);
 		}
@@ -204,11 +199,9 @@
 			if (callbackCalled) {
 				return;
 			}
-
 			index += 1;
 			validated += 1;
 			isValid = isValid && valid;
-
 			if (validated < vl && isValid) {
 				// call next validation
 				next();
@@ -225,21 +218,16 @@
 
 		function validate() {
 			var validator;
-
 			while (index < vl && isValid) {
-
 				validator = validatorManager.getValidatorByIndex(index, isGroup);
-
 				if (field.is(validator.selector)) {
 					validator.fn(value, field, getOnValidate(validator, validate));
 				} else {
 					validated += 1;
-
 					if (validated >= vl) {
 						finishValidation(validator);
 					}
 				}
-
 				index += 1;
 			}
 		}
@@ -250,7 +238,6 @@
 	}
 
 	function triggerFieldEvents(result, field) {
-
 		if (result.isValid) {
 			field.trigger(events.FIELD_VALID, result);
 		} else {
@@ -269,10 +256,8 @@
 	function isAllowedEventValidation(e) {
 		var output = true,
 			which;
-
 		if (e.type === 'keyup') {
 			which = e.which;
-
 			// on keyup event don't allow to validate if user presses these
 			// buttons
 			// I would use switch/case but jsperf says it's the slowest way to do the comparisons.
