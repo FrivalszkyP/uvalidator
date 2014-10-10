@@ -155,17 +155,16 @@
 		return form.find('[data-validator-group="' + group + '"]');
 	}
 
-	function validateWith(value, field, name, callback, isGroup) {
+	function validateWith(value, field, name, callback, isGroup, form) {
 		var validator = validatorManager.getValidatorByName(name, isGroup);
-
 		if (validator) {
-			validator.fn(value, field, callback);
+			validator.fn.call(form, value, field, callback);
 		} else {
 			callback(true);
 		}
 	}
 
-	function validateField(field, callback, isGroup) {
+	function validateField(field, callback, isGroup, form) {
 		var vl, value, isValid, index, validated, callbackCalled;
 
 		field = $(field);
@@ -329,13 +328,11 @@
 
 		form.trigger(events.START_FORM_VALIDATION, form);
 		fields.each(function () {
-			validateField(this, onValidate, false);
+			validateField(this, onValidate, false, form);
 		});
-		/*jslint unparam: true*/
 		$.each(groups, function (group, items) {
-			validateField(items, onValidate, true);
+			validateField(items, onValidate, true, form);
 		});
-		/*jslint unparam: false*/
 	}
 
 	function bindDelegation(form, settings) {
@@ -363,7 +360,7 @@
 
 					elements = getGroupItemsForField(target);
 
-					validateField(elements, triggerFieldEvents, true);
+					validateField(elements, triggerFieldEvents, true, form);
 
 				});
 			}
@@ -387,7 +384,7 @@
 		addMethod: validatorManager.addValidatorMethod,
 		addGroupMethod: validatorManager.addValidatorGroupMethod,
 		events: events,
-		fieldIsValid: function (field, callback, conf) {
+		fieldIsValid: function (field, callback, conf, form) {
 			var isGroup;
 			field = $(field);
 			conf = $.extend({}, defaults, conf);
@@ -397,17 +394,17 @@
 				field = getGroupItemsForField(field);
 			}
 
-			validateField(field, callback, isGroup);
+			validateField(field, callback, isGroup, form);
 		},
-		validateField: function (field, callback, conf) {
+		validateField: function (field, callback, conf, form) {
 			$.uvalidator.fieldIsValid(field, function (result, field) {
 				triggerFieldEvents(result, field);
-				callback(result, field);
+				callback && callback(result, field);
 			}, conf);
 		},
-		validateWith: function (field, method, callback) {
+		validateWith: function (field, method, callback, form) {
 			var isGroup = field.is('[data-validator-group]');
-			validateWith(getFieldValue(field), field, method, callback, isGroup);
+			validateWith(getFieldValue(field), field, method, callback, isGroup, form);
 		},
 		validate: function (form) {
 			validateForm($(form));
