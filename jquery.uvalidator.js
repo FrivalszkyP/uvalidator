@@ -152,7 +152,7 @@
 		var group, form;
 		group = field.attr('data-validator-group');
 		form = field[0].form ? $(field[0].form) : field.closest('form');
-		return form.find('[data-validator-group="' + group + '"]');
+		return form.find('[data-validator-group="' + group + '"]:not(:disabled)');
 	}
 
 	function validateWith(value, field, name, callback, isGroup, form) {
