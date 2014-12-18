@@ -542,7 +542,7 @@ Not more and not less than two inputs must belong to a group. Each input must ha
 
 ```html
 <input type="text" name="month" value="" class="cc-expiration" data-validator-ccexp="month" data-validator-group="cc-expiration-date" />
-<input type="text" name="year" value="" class="cc-expiration" "data-validator-ccexp="year" data-validator-group="cc-expiration-date" />
+<input type="text" name="year" value="" class="cc-expiration" data-validator-ccexp="year" data-validator-group="cc-expiration-date" />
 ```
 
 ### Defining validator methods
