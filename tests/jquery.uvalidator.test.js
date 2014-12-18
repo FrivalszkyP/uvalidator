@@ -69,7 +69,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             Y.Assert.isFalse(spies.formValid.called);
         },
         "check if spies were called correctly on an invalid form": function () {
-            Y.Assert.areSame(6, spies.fieldInvalid.callCount);
+            Y.Assert.areSame(7, spies.fieldInvalid.callCount);
             Y.Assert.areSame(6, spies.fieldValid.callCount);
             Y.Assert.isTrue(spies.formInvalid.calledOnce);
             Y.Assert.isFalse(spies.formValid.called);
