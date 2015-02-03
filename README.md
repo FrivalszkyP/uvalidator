@@ -711,7 +711,7 @@ npm test
     * jquery.uvalidator.skin.ustream.js
     * jquery.uvalidator.messages.js
 
-Messages not included to any of the packages, because the implementation may differ on different environment (localization).
+Messages not included into most of the packages, because the implementation may differ on different environment (localization).
 
 ## TODO
 
