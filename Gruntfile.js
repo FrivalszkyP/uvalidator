@@ -38,6 +38,7 @@ module.exports = function (grunt) {
     });
 
     grunt.loadNpmTasks('grunt-jslint');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
 
     grunt.initConfig({
         'md-to-html': {
@@ -52,8 +53,25 @@ module.exports = function (grunt) {
             files: [
                 'jquery.uvalidator.js'
             ]
-        }
+        },
+		uglify: {
+			uvalidator: {
+				files: {
+					'dist/jquery.uvalidator.min.js': ['jquery.uvalidator.js']
+				}
+			},
+			uvalidatorWSkinUstream: {
+				files: {
+					'dist/jquery.uvalidator.skin.ustream.min.js': [
+						'jquery.uvalidator.js',
+						'jquery.uvalidator.rules.js',
+						'jquery.uvalidator.skin.js',
+						'jquery.uvalidator.skin.ustream.js'
+					]
+				}
+			}
+		}
     });
 
-    grunt.registerTask('default', ['md-to-html', 'jslint']);
+    grunt.registerTask('default', ['md-to-html', 'jslint', 'uglify']);
 };
