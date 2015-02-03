@@ -1,7 +1,7 @@
 {
   "name": "uvalidator",
   "description": "HTML Form validator jquery plugin",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "scripts": {
     "test": "node_modules/grover/bin/grover.js tests/*.html",
     "build-core": "$(npm bin)/uglifyjs jquery.uvalidator.js -c -m > dist/jquery.uvalidator.core.min.js",
