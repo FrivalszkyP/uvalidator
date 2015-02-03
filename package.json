@@ -1,9 +1,16 @@
 {
   "name": "uvalidator",
   "description": "HTML Form validator jquery plugin",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "scripts": {
-	  "test": "node_modules/grover/bin/grover.js tests/*.html"
+    "test": "node_modules/grover/bin/grover.js tests/*.html",
+    "build-core": "$(npm bin)/uglifyjs jquery.uvalidator.js -c -m > dist/jquery.uvalidator.core.min.js",
+    "build-core-rules": "$(npm bin)/uglifyjs jquery.uvalidator.js jquery.uvalidator.rules.js -c -m > dist/jquery.uvalidator.core.rules.min.js",
+    "build-skin": "$(npm bin)/uglifyjs jquery.uvalidator.skin.js -c -m > dist/jquery.uvalidator.skin.min.js",
+    "build-skin-ustream": "$(npm bin)/uglifyjs jquery.uvalidator.skin.js jquery.uvalidator.skin.ustream.js -c -m > dist/jquery.uvalidator.skin.ustream.min.js",
+    "build-skin-base": "$(npm bin)/uglifyjs jquery.uvalidator.skin.js jquery.uvalidator.skin.base.js -c -m > dist/jquery.uvalidator.skin.base.min.js",
+    "build-core-skin-messages": "$(npm bin)/uglifyjs jquery.uvalidator.js jquery.uvalidator.rules.js jquery.uvalidator.skin.js jquery.uvalidator.messages.js -c -m > dist/jquery.uvalidator.core.skin.messages.min.js",
+    "build-core-skin-ustream-messages": "$(npm bin)/uglifyjs jquery.uvalidator.js jquery.uvalidator.rules.js jquery.uvalidator.skin.js jquery.uvalidator.skin.ustream.js jquery.uvalidator.messages.js -c -m > dist/jquery.uvalidator.core.skin.messages.min.js"
   },
   "repository": {
     "type": "git",
