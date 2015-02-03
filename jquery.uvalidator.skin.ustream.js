@@ -1,28 +1,6 @@
-/*
-Copyright (C) 2013 Ustream Inc.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
-of the Software, and to permit persons to whom the Software is furnished to do
-so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-
 /*jslint browser: true*/
 (function ($) {
-	"use strict";
+	'use strict';
 	function getCorrectField(field) {
 		var nodeName = field.nodeName;
 		field = $(field);
@@ -32,26 +10,59 @@ SOFTWARE.
 		return field;
 	}
 	$.uvalidatorSkin('ustream', {
+		options: {
+			focusOnFormInvalid: true,
+			inputInvalidClassName: 'input-invalid',
+			inputValidClassName: 'input-valid',
+			errorMessageClassName: 'tooltip-error'
+		},
 		setForm: function (form, settings) {
 			this.superclass.setForm(form, settings);
+
+			/* Removed due to a Firefox (23.0.1) bug within SITEA-9681
+			 * Seems like parallel DOM manipulation stops native select dropdown to open
+			 * We don't need this class anyways - or at least I didn't find any relevance
+			 *
 			this.form.delegate(':input', 'focus', $.proxy(function (focusEvent) {
 				$(focusEvent.target).closest('.control-group').addClass('focused');
 			}, this));
 			this.form.delegate(':input', 'blur', $.proxy(function (focusEvent) {
 				$(focusEvent.target).closest('.control-group').removeClass('focused');
 			}, this));
+			*/
+
+			//sorry for the exeption It was the worst solution ever to override the keyup event :(
+			this.form.delegate(':input:not(".liveValidation")', 'keyup', $.proxy(function (event) {
+				// 13 is enter
+				// 9 is tab
+				// 16 is shift
+				if ($.inArray(event.keyCode, [9, 13, 16]) !== -1) {
+					return;
+				}
+				$(event.target).removeClass(this.options.inputInvalidClassName);
+			}, this));
 			return this;
 		},
 		setFieldInvalid: function (field, args) {
-			field = getCorrectField(field);
-			field.addClass('input-invalid').removeClass('input-valid');
+			var options = this.options;
+				field = getCorrectField(field);
+
+			field.addClass(options.inputInvalidClassName).removeClass(options.inputValidClassName);
 		},
 		setFieldValid: function (field, args) {
+			var options = this.options;
 			field = getCorrectField(field);
-			field.addClass('input-valid').removeClass('input-invalid');
+			field.addClass(options.inputValidClassName).removeClass(options.inputInvalidClassName);
+		},
+		unsetValidatorState: function (field, args) {
+			var options = this.options;
+			field = getCorrectField(field);
+			field.removeClass(options.inputValidClassName + ' ' + options.inputInvalidClassName);
+			this.hideFieldError(field);
 		},
 		addFieldError: function (field, args) {
 			var msg = this.getMessage(args),
+				options = this.options,
 				selectGroup,
 				container,
 				fieldOrGroup,
@@ -65,15 +76,20 @@ SOFTWARE.
 				container = selectGroup;
 			}
 
-			errorElem = container.find('.tooltip-error');
+			errorElem = container.find('.' + options.errorMessageClassName);
 
 			if (errorElem.length < 1) {
 				errorElem = $('<span />')
 						// .attr('for', fieldOrGroup.attr('id'))
-						.addClass('tooltip-error');
+						.addClass(options.errorMessageClassName);
 
 				if (fieldOrGroup[0].nodeName === 'SELECT') {
 					fieldOrGroup.next('span.select').after(errorElem);
+				} else if (fieldOrGroup.hasClass('page-checkbox')) {
+					fieldOrGroup.next('label').after(errorElem);
+				} else if (fieldOrGroup.hasClass('page-radio')) {
+					// show error message only after the last radio
+					fieldOrGroup.last().next('label').after(errorElem);
 				} else {
 					fieldOrGroup.after(errorElem);
 				}
@@ -84,12 +100,15 @@ SOFTWARE.
 			this.addFieldError(field, args);
 		},
 		hideFieldError: function (field, args) {
-			$(field).closest('.control-group').find('.tooltip-error').remove();
+			$(field).closest('.control-group').find('.' + this.options.errorMessageClassName).remove();
 		},
 		onFormInvalid: function () {
-			this.form
-					.find(':input.input-invalid,.control-select.input-invalid > select')
-					.first().focus();
+			if (this.options.focusOnFormInvalid) {
+				var inputInvalidClassName = this.options.inputInvalidClassName;
+				this.form
+						.find(':input.' + inputInvalidClassName + ',.control-select.' + inputInvalidClassName + ' > select')
+						.first().focus();
+			}
 		}
 	});
 }(window.jQuery));
