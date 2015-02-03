@@ -22,12 +22,14 @@ SOFTWARE.
 
 /*jslint browser: true*/
 (function ($) {
-	"use strict";
+	'use strict';
 	$.uvalidatorSkin.addMessages([
 		['required', 'The field is required.'],
 		['number', 'Type a number, please.'],
-		['userpassword', 'Password must contain at least 7 characters including at' +
-			' least 1 capitalized letter AND at least 1 number.'],
+		[
+			'userpassword',
+			'Password must contain at least 7 characters including at' +
+	' least 1 capitalized letter AND at least 1 number.'],
 		['passwordverify', 'Password must be the same as above.'],
 		['creditcard', 'Invalid credit card number.'],
 		['url', 'Please type a valid url.'],
@@ -40,6 +42,9 @@ SOFTWARE.
 			var maxVal = args.field.attr('data-validation-max') || args.field.attr('max');
 			return 'The maximum value is ' + maxVal + '.';
 		}],
+		['uniquemail', 'Email already in use'],
+		['freeusername', 'Username already taken'],
+		['cvv', 'Invalid cvv number'],
 		['pattern', 'Invalid format.']
 	]);
 }(window.jQuery));

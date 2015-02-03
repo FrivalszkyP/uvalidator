@@ -695,6 +695,24 @@ _To build your own skin handler, you only need to subscribe to the events of the
 npm test
 ```
 
+## Distribution files
+
+* *jquery.uvalidator.min.js* Only the validator file itself, minified by uglify js
+    * jquery.uvalidator.js
+* *jquery.uvalidator.skin.ustream.min.js*:
+    * jquery.uvalidator.js
+    * jquery.uvalidator.rules.js
+    * jquery.uvalidator.skin.js
+    * jquery.uvalidator.skin.ustream.js
+* jquery.uvalidator.skin.ustream.messages.min.js
+    * jquery.uvalidator.js
+    * jquery.uvalidator.rules.js
+    * jquery.uvalidator.skin.js
+    * jquery.uvalidator.skin.ustream.js
+    * jquery.uvalidator.messages.js
+
+Messages not included to any of the packages, because the implementation may differ on different environment (localization).
+
 ## TODO
 
 These inconsitencies or strange behaviours found so far:

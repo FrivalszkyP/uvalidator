@@ -61,6 +61,17 @@ module.exports = function (grunt) {
 					'dist/jquery.uvalidator.min.js': ['jquery.uvalidator.js']
 				}
 			},
+			uvalidatorWSkinUstreamMessages: {
+				files: {
+					'dist/jquery.uvalidator.skin.ustream.messages.min.js': [
+						'jquery.uvalidator.js',
+						'jquery.uvalidator.rules.js',
+						'jquery.uvalidator.skin.js',
+						'jquery.uvalidator.skin.ustream.js',
+						'jquery.uvalidator.messages.js'
+					]
+				}
+			},
 			uvalidatorWSkinUstream: {
 				files: {
 					'dist/jquery.uvalidator.skin.ustream.min.js': [
