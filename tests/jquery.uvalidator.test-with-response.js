@@ -47,7 +47,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 	}
 
 	coreSuite = new Y.Test.Suite({
-		name: 'validator tests',
+		name: 'validator with response tests',
 		setUp: function () {
 			var skin;
 
