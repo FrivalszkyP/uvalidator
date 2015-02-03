@@ -1,6 +1,7 @@
 /*jslint browser: true*/
 /*global YUI: true, $: true */
-YUI().use('node', 'test', 'test-console', function (Y) {
+var yui = new YUI();
+yui.use('node', 'test', 'test-console', function (Y) {
 	'use strict';
 	var coreSuite,
         required = $('#required'),
@@ -94,32 +95,10 @@ YUI().use('node', 'test', 'test-console', function (Y) {
             $('form').submit();
         },
         tearDown: tearDown,
-        'lowercase letters only': function () {
-            pass.val('foobarbaz').change();
+		'minimum 5 chars length': function () {
+			pass.val('asdf').change();
             Y.Assert.isTrue(pass.hasClass(invalidClass));
-		},
-        'uppercase letters only': function () {
-            pass.val('FOOBARBAZ').change();
-            Y.Assert.isTrue(pass.hasClass(invalidClass));
-		},
-        'no number': function () {
-            pass.val('Foobarbaz.').change();
-            Y.Assert.isTrue(pass.hasClass(invalidClass));
-		},
-        'no uppercase': function () {
-            pass.val('foobarbaz7.').change();
-            Y.Assert.isTrue(pass.hasClass(invalidClass));
-		},
-        'no lowercase': function () {
-            pass.val('FOOBARBAZ7.').change();
-            Y.Assert.isTrue(pass.hasClass(invalidClass));
-		},
-        'less than 7 chars': function () {
-            pass.val('F1f.').change();
-            Y.Assert.isTrue(pass.hasClass(invalidClass));
-		},
-        'valid password format': function () {
-            pass.val('F1fooabar').change();
+			pass.val('asdfj').change();
             Y.Assert.isTrue(pass.hasClass(validClass));
 		}
 	}));
