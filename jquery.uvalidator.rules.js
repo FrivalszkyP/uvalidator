@@ -30,10 +30,10 @@ SOFTWARE.
 		}
 		return n;
 	}
-	var patterns, dbg;
+	var patterns, dbg, remoteValidation;
 
 	patterns = {
-		userpassword: /(?=.{7,})(?=.*[a-z])(?=.*[A-Z])(?=.*[\d])/,
+        userpassword: /(?=.{5,})/,
 
 		// Shamelessly lifted from Scott Gonzalez via the Bassistance
 		// Validation plugin
@@ -49,7 +49,48 @@ SOFTWARE.
 		// number: /-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?/,
 
 		alpha: /[a-zA-Z]+/,
-		alphaNumeric: /\w+/
+		alphaNumeric: /\w+/,
+		color: /#[\da-fA-F]{6}/,
+		tel: /^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$/i
+	};
+
+	remoteValidation = function (method, value, element, callback, form) {
+		element.addClass("loading");
+
+		if (!form.ajaxCalls) {
+			form.ajaxCalls = {};
+		}
+
+		if (!form.ajaxCalls[method]) {
+			form.ajaxCalls[method] = [];
+		} else {
+			var acl = form.ajaxCalls[method].length;
+
+			while (acl--) {
+				form.ajaxCalls[method][acl].abort();
+			}
+		}
+
+		var ajaxCall = $.ajax({
+			url: '/ajax/validate.json/' + method,
+			data: {
+				value: value
+			},
+			dataType: 'json',
+			type: 'post',
+			success: function (response) {
+				element.removeClass("loading");
+
+				if (response && response.success) {
+					callback(true);
+				} else {
+					$.uvalidatorSkin.addMessage(method, response.error.message);
+					callback(false);
+				}
+			}
+		});
+
+		form.ajaxCalls[method].push(ajaxCall);
 	};
 
 	if (window.console) {
@@ -240,6 +281,46 @@ SOFTWARE.
 			callback(valid);
 		}
 	);
+	$.uvalidator.addMethod(
+		'.cvv',
+		'cvv',
+		function (value, element, callback) {
+			var cardNumber, isAmex, valid, ccField;
+
+			ccField = element.attr('data-validator-ccfield');
+
+			cardNumber = $(ccField).val();
+
+			if (cardNumber) {
+				isAmex = cardNumber.match(/^3[47]\d{13}$/);
+
+				if (isAmex) {
+					valid = value.match(/^\d{4}$/);
+				} else {
+					valid = value.match(/^\d{3}$/);
+				}
+			} else {
+				valid = value.match(/^\d{3}$/);
+			}
+
+			callback(valid);
+		}
+	);
+	$.uvalidator.addMethod(
+		'input[type=color], .input-color',
+		'iscolor',
+		function (value, element, callback) {
+			callback(patterns.color.test(value) || value === '');
+		}
+	);
+
+	$.uvalidator.addMethod(
+		'input[type=tel], .input-tel',
+		'tel',
+		function (value, element, callback) {
+			callback(patterns.tel.test(value));
+		}
+	);
 
 	$.uvalidator.addMethod(
 		'.pattern,.input-pattern,[pattern]',
@@ -251,12 +332,24 @@ SOFTWARE.
 
 			if (!pattern) {
 				callback(false);
+			} else {
+				regex = new RegExp(pattern);
+				valid = regex.test(value);
+
+				callback(valid);
 			}
-
-			regex = new RegExp(pattern);
-			valid = regex.test(value);
-
-			callback(valid);
 		}
 	);
+
+	$.uvalidator.addMethod('.freeusername', 'freeusername', function (value, element, callback) {
+		remoteValidation('freeusername', value, element, callback, this);
+	});
+
+	$.uvalidator.addMethod('.uniquemail', 'uniquemail', function (value, element, callback) {
+		remoteValidation('uniquemail', value, element, callback, this);
+	});
+
+	$.uvalidator.addMethod('[minlength]', 'minlength', function(value, element, callback) {
+		callback(value.length >= element.attr('minlength'));
+	});
 }(window.jQuery));
