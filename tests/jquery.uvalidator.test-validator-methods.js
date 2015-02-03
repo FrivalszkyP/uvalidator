@@ -13,8 +13,11 @@ yui.use('node', 'test', 'test-console', function (Y) {
         email = $('#email'),
         creditcard = $('#creditcard'),
         min = $('#min'),
+        minTextarea = $('#min-textarea'),
         max = $('#max'),
+        maxTextarea = $('#max-textarea'),
         minMax = $('#min-max'),
+        minMaxTextarea = $('#min-max-textarea'),
         pattern = $('#pattern'),
         invalidClass = 'input-invalid',
         validClass = 'input-valid';
@@ -37,8 +40,11 @@ yui.use('node', 'test', 'test-console', function (Y) {
         email.val('');
         creditcard.val('');
         min.val('');
+        minTextarea.val('');
         max.val('');
+        maxTextarea.val('');
         minMax.val('');
+        minMaxTextarea.val('');
         pattern.val('');
     }
 
@@ -49,8 +55,15 @@ yui.use('node', 'test', 'test-console', function (Y) {
 		},
 		tearDown: tearDown
 	});
-	coreSuite.add(new Y.Test.Case({
-		name: 'Required tests',
+    coreSuite = new Y.Test.Suite({
+        name: 'validator tests',
+        setUp: function () {
+            var skin = $.uvalidatorApplySkin("ustream", $("form"));
+        },
+        tearDown: tearDown
+    });
+    coreSuite.add(new Y.Test.Case({
+        name: "Required tests",
         setUp: function () {
             $('#Messages').hide();
             $('form').submit();
@@ -64,7 +77,7 @@ yui.use('node', 'test', 'test-console', function (Y) {
             required.val('a').change();
             Y.Assert.uFieldIsVallid(required);
         }
-	}));
+    }));
 
 	coreSuite.add(new Y.Test.Case({
 		name: 'Required group tests',
@@ -84,7 +97,7 @@ yui.use('node', 'test', 'test-console', function (Y) {
             Y.Assert.uFieldIsVallid(radio1);
             Y.Assert.uFieldIsVallid(radio2);
         }
-	}));
+    }));
 
 	coreSuite.add(new Y.Test.Case({
 		name: 'Password format tests',
@@ -100,8 +113,8 @@ yui.use('node', 'test', 'test-console', function (Y) {
             Y.Assert.isTrue(pass.hasClass(invalidClass));
 			pass.val('asdfj').change();
             Y.Assert.isTrue(pass.hasClass(validClass));
-		}
-	}));
+        }
+    }));
 
 	coreSuite.add(new Y.Test.Case({
 		name: 'Password verify tests',
@@ -214,10 +227,35 @@ yui.use('node', 'test', 'test-console', function (Y) {
             Y.Assert.isTrue(min.hasClass(validClass), 'minimum is 0 value is 0');
             min.val('0.1').change();
             Y.Assert.isTrue(min.hasClass(validClass), 'minimum is 0 value is 0.1');
-		}
-	}));
-	coreSuite.add(new Y.Test.Case({
-		name: 'Max number test',
+        },
+        "invalid format in min-textarea": function () {
+            minTextarea.val('aaa').change();
+            Y.Assert.isFalse(minTextarea.hasClass(validClass));
+        },
+        "minimum-textarea pass tests": function () {
+            minTextarea.attr('data-validator-min', 5);
+            minTextarea.val('4').change();
+            Y.Assert.isFalse(minTextarea.hasClass(validClass), 'minimum is 5 value is 4');
+            minTextarea.attr('data-validator-min', -5);
+            minTextarea.val('-6').change();
+            Y.Assert.isFalse(minTextarea.hasClass(validClass), 'minimum is -5 value is -6');
+        },
+        "valid minimum values textarea": function () {
+            minTextarea.attr('data-validator-min', -5);
+            minTextarea.val('-4').change();
+            Y.Assert.isTrue(minTextarea.hasClass(validClass), 'minimum is -5 value is -4');
+            minTextarea.val('-5').change();
+            Y.Assert.isTrue(minTextarea.hasClass(validClass), 'minimum is -5 value is -5');
+
+            minTextarea.attr('data-validator-min', 0);
+            minTextarea.val('0').change();
+            Y.Assert.isTrue(minTextarea.hasClass(validClass), 'minimum is 0 value is 0');
+            minTextarea.val('0.1').change();
+            Y.Assert.isTrue(minTextarea.hasClass(validClass), 'minimum is 0 value is 0.1');
+        }
+    }));
+    coreSuite.add(new Y.Test.Case({
+        name: 'Max number test',
         setUp: function () {
             $('#Messages').hide();
             max.val('');
@@ -271,10 +309,22 @@ yui.use('node', 'test', 'test-console', function (Y) {
         'valid number in min-max': function () {
             minMax.val(3).change();
             Y.Assert.isTrue(minMax.hasClass(validClass));
-		}
-	}));
-	coreSuite.add(new Y.Test.Case({
-		name: 'Pattern tests',
+        },
+        "invalid number in min-max-textrea": function () {
+            minMaxTextarea.attr('data-validator-min', 1);
+            minMaxTextarea.attr('data-validator-max', 5);
+            minMaxTextarea.val(0).change();
+            Y.Assert.isFalse(minMaxTextarea.hasClass(validClass));
+            minMaxTextarea.val(6).change();
+            Y.Assert.isFalse(minMaxTextarea.hasClass(validClass));
+        },
+        "valid number in min-max-textrea": function () {
+            minMaxTextarea.val(3).change();
+            Y.Assert.isTrue(minMaxTextarea.hasClass(validClass));
+        }
+    }));
+    coreSuite.add(new Y.Test.Case({
+        name: 'Pattern tests',
         setUp: function () {
             $('#Messages').hide();
             minMax.val('');
@@ -290,7 +340,7 @@ yui.use('node', 'test', 'test-console', function (Y) {
             pattern.val('9').change();
             Y.Assert.isTrue(pattern.hasClass(validClass));
         }
-	}));
-	Y.Test.Runner.add(coreSuite);
-	Y.Test.Runner.run();
+    }));
+    Y.Test.Runner.add(coreSuite);
+    Y.Test.Runner.run();
 });

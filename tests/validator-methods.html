@@ -17,11 +17,17 @@
         @import url(http://twitter.github.com/bootstrap/assets/css/bootstrap.css);
     </style>
     <style type="text/css">
-        .control-group > .uerror {
+        .control-group > .tooltip-error {
             display: none;
         }
-        .invalid:focus + .uerror {
+        .focused .input-invalid + .tooltip-error {
             display: block;
+        }
+        .input-invalid {
+            border: 1px solid red;
+        }
+        .input-valid {
+            border: 1px solid green;
         }
         /*
         .control-group.focused > .uerror {
@@ -55,12 +61,24 @@
             <input type="text" name="min" value="" id="min" class="input-min" data-validator-min="5" />
         </div>
         <div class="control-group">
+            <label for="min-textarea">min-textarea</label>
+            <textarea type="text" name="min" value="" id="min-textarea" class="input-min" data-validator-min="5"></textarea>
+        </div>
+        <div class="control-group">
             <label for="max">max</label>
             <input type="text" name="max" value="" id="max" class="input-max" data-validator-max="5" />
         </div>
         <div class="control-group">
+            <label for="max-textarea">max-textarea</label>
+            <textarea type="text" name="max" value="" id="max-textarea" class="input-max" data-validator-max="5"></textarea>
+        </div>
+        <div class="control-group">
             <label for="min-max">min-max</label>
             <input type="text" name="min-max" value="" id="min-max" class="input-max input-min" data-validator-max="5" data-validator-min="1" />
+        </div>
+        <div class="control-group">
+            <label for="min-max-textarea">min-max-textarea</label>
+            <textarea type="text" name="min-max-textarea" value="" id="min-max-textarea" class="input-max input-min" data-validator-max="5" data-validator-min="1"></textarea>
         </div>
         <div class="control-group">
             <label for="pattern">pattern</label>
