@@ -10,6 +10,10 @@
 		return field;
 	}
 	$.uvalidatorSkin('ustream', {
+		validatorEventMap: {
+			START_REMOTE_VALIDATION: 'onRemoteValidationStart',
+			FINISH_REMOTE_VALIDATION: 'onRemoteValidationFinish'
+		},
 		options: {
 			focusOnFormInvalid: true,
 			inputInvalidClassName: 'input-invalid',

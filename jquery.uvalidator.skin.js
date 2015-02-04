@@ -25,6 +25,7 @@ SOFTWARE.
 	"use strict";
 	var skins = {},
 		messages = {},
+		events = $.uvalidator.events,
 		defaultProto;
 
 	function isFunction(func) {
@@ -36,6 +37,16 @@ SOFTWARE.
 	}
 
 	defaultProto = {
+		validatorEventMap: {
+			FIELD_VALID: 'onFieldValid',
+			FIELD_INVALID: 'onFieldInvalid',
+			FORM_VALID: 'onFormValid',
+			FORM_INVALID: 'onFormInvalid',
+			FINISH_FORM_VALIDATION: 'onFormValidationFinish',
+			START_FORM_VALIDATION: 'onFormValidationStart',
+			FINISH_FIELD_VALIDATION: 'onFieldValidationFinish',
+			START_FIELD_VALIDATION: 'onFieldValidationStart'
+		},
 		/**
 		 * @method setForm
 		 * @property {jQueryObject} form
@@ -43,36 +54,28 @@ SOFTWARE.
 		 * @chainable
 		 */
 		setForm: function (form, settings) {
-			var that = $(this);
+			var proxyTrigger = $.proxy(function (event) {
+				var args = $.makeArray(arguments).slice(1);
+				$(this).trigger(event, args);
+			}, this);
+
+			var formUvalidator;
+
 			this.form = form;
 			settings = settings || {};
+			formUvalidator = form.uvalidator(settings);
 
-			function proxyTrigger(event) {
-				var args = $.makeArray(arguments).slice(1);
-				that.trigger(event, args);
-			}
+			$.each(this.validatorEventMap, $.proxy(function (key, value) {
+				var eventName = events[key],
+					callback = this[value];
 
-			form.uvalidator(settings)
-				.on('formInvalid', $.proxy(this.onFormInvalid, this))
-				.on('formValid', $.proxy(this.onFormValid, this))
-				.on('fieldInvalid', $.proxy(this.onFieldInvalid, this))
-				.on('fieldValid', $.proxy(this.onFieldValid, this))
-				.on('startFieldValidation', $.proxy(this.onFieldValidationStart, this))
-				.on('finishFieldValidation', $.proxy(this.onFieldValidationFinish, this))
-				.on('startFormValidation', $.proxy(this.onFormValidationStart, this))
-				.on('finishFormValidation', $.proxy(this.onFormValidationFinish, this))
+				if (typeof callback === 'function') {
+					formUvalidator.on(eventName, $.proxy(callback, this));
+				}
 
-				.on('formValid', $.proxy(this.resetResults, this))
-
-				.on('formValid', proxyTrigger)
-				.on('formInvalid', proxyTrigger)
-				.on('fieldInvalid', proxyTrigger)
-				.on('fieldValid', proxyTrigger)
-				.on('startFieldValidation', proxyTrigger)
-				.on('finishFieldValidation', proxyTrigger)
-				.on('startFormValidation', proxyTrigger)
-				.on('finishFormValidation', proxyTrigger);
-
+				formUvalidator.on(eventName, proxyTrigger);
+			}, this));
+			formUvalidator.on(events.FORM_VALID, $.proxy(this.resetResults, this));
 			return this;
 		},
 		/**
@@ -233,7 +236,7 @@ SOFTWARE.
 		onFormInvalid: function () {}
 	};
 	function createSkin(name, proto) {
-		proto = $.extend({}, defaultProto, proto);
+		proto = $.extend(true, {}, defaultProto, proto);
 
 		var Skin = function UvalidatorSkin() {};
 		Skin.prototype = proto;
