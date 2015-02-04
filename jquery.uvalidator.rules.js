@@ -30,7 +30,7 @@ SOFTWARE.
 		}
 		return n;
 	}
-	var patterns, dbg, remoteValidation;
+	var patterns, dbg;
 
 	patterns = {
         userpassword: /(?=.{5,})/,
@@ -52,45 +52,6 @@ SOFTWARE.
 		alphaNumeric: /\w+/,
 		color: /#[\da-fA-F]{6}/,
 		tel: /^(?:(?:\(?(?:00|\+)([1-4]\d\d|[1-9]\d?)\)?)?[\-\.\ \\\/]?)?((?:\(?\d{1,}\)?[\-\.\ \\\/]?){0,})(?:[\-\.\ \\\/]?(?:#|ext\.?|extension|x)[\-\.\ \\\/]?(\d+))?$/i
-	};
-
-	remoteValidation = function (method, value, element, callback, form) {
-		element.addClass("loading");
-
-		if (!form.ajaxCalls) {
-			form.ajaxCalls = {};
-		}
-
-		if (!form.ajaxCalls[method]) {
-			form.ajaxCalls[method] = [];
-		} else {
-			var acl = form.ajaxCalls[method].length;
-
-			while (acl--) {
-				form.ajaxCalls[method][acl].abort();
-			}
-		}
-
-		var ajaxCall = $.ajax({
-			url: '/ajax/validate.json/' + method,
-			data: {
-				value: value
-			},
-			dataType: 'json',
-			type: 'post',
-			success: function (response) {
-				element.removeClass("loading");
-
-				if (response && response.success) {
-					callback(true);
-				} else {
-					$.uvalidatorSkin.addMessage(method, response.error.message);
-					callback(false);
-				}
-			}
-		});
-
-		form.ajaxCalls[method].push(ajaxCall);
 	};
 
 	if (window.console) {
@@ -340,14 +301,6 @@ SOFTWARE.
 			}
 		}
 	);
-
-	$.uvalidator.addMethod('.freeusername', 'freeusername', function (value, element, callback) {
-		remoteValidation('freeusername', value, element, callback, this);
-	});
-
-	$.uvalidator.addMethod('.uniquemail', 'uniquemail', function (value, element, callback) {
-		remoteValidation('uniquemail', value, element, callback, this);
-	});
 
 	$.uvalidator.addMethod('[minlength]', 'minlength', function(value, element, callback) {
 		callback(value.length >= element.attr('minlength'));
