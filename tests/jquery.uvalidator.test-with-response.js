@@ -1,18 +1,14 @@
 /*jslint browser: true*/
 /*global YUI: true, sinon: true, $: true */
-YUI().use('node', 'test', 'test-console', function (Y) {
-	"use strict";
+var yui = new YUI();
+yui.use('node', 'test', 'test-console', function (Y) {
+	'use strict';
 	var form = $('form'),
 		messages = $('#Messages'),
 		coreSuite,
         radio1 = $('#radio-1'),
         radio2 = $('#radio-2'),
-        radio3 = '#radio-3',
-        radio4 = '#radio-4',
         field1 = $('#first'),
-        field2 = '#fooNotRequired',
-        field3 = '#fooNumber',
-        submitButton = '#SubmitButton',
 		validClass = 'input-valid',
 		invalidClass = 'input-invalid',
 		errorLabelClass = 'tooltip-error',
@@ -24,10 +20,10 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 			var errors = [],
 				response = {};
 			if (form.find('[name="foo"]').val() % 2) {
-				errors.push(['foo', "Look! This field is invalid"]);
+				errors.push(['foo', 'Look! This field is invalid']);
 			}
-			if (form.find('[name="bar"]:checked').val() === "2") {
-				errors.push(['bar', "Grrr, it's wrong..."]);
+			if (form.find('[name="bar"]:checked').val() === '2') {
+				errors.push(['bar', 'Grrr, it\'s wrong...']);
 			}
 			response.success = errors.length < 1;
 			if (!response.success) {
@@ -52,7 +48,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 			var skin;
 
             messages.hide();
-            skin = $.uvalidatorApplySkin("ustream", form);
+            skin = $.uvalidatorApplySkin('ustream', form);
 			$('#HideAllErrors').click(function () {
 				skin.hideAllError();
 			});
@@ -104,7 +100,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 	});
 
 	coreSuite.add(new Y.Test.Case({
-		name: "Test ajax form submission",
+		name: 'Test ajax form submission',
 		setUp: function () {
 			createServer();
 			$(':input').removeClass([validClass, invalidClass].join(' ')).val();
@@ -119,7 +115,7 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 			$(':input').removeClass([validClass, invalidClass].join(' '));
 			$('#.control-group').removeClass('error success');
 		},
-		"Test invalid fields": function () {
+		'Test invalid fields': function () {
 			$('form').submit();
 
 			this.wait(function () {
@@ -138,15 +134,14 @@ YUI().use('node', 'test', 'test-console', function (Y) {
 				Y.Assert.areSame(2, radioError.length, 'Error label not found');
 			}, 100);
 		},
-		"Test if field1 valid on server too": function () {
-			var controlGroups,
-				radioError;
+		'Test if field1 valid on server too': function () {
+			var controlGroups;
 
 			field1.val(12).change();
 			controlGroups = $('.' + invalidClass).closest('.control-group');
 			Y.Assert.areSame(0, controlGroups.length, 'Found invalid field');
 		},
-		"Test if radio is valid on server too": function () {
+		'Test if radio is valid on server too': function () {
 			var controlGroups;
 
 			radio1.prop('checked', true).change();
