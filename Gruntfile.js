@@ -61,9 +61,17 @@ module.exports = function (grunt) {
 					'dist/jquery.uvalidator.min.js': ['jquery.uvalidator.js']
 				}
 			},
-			uvalidatorWSkinUstreamMessages: {
+			uvalidatorWRules: {
 				files: {
-					'dist/jquery.uvalidator.skin.ustream.messages.min.js': [
+					'dist/jquery.uvalidator.rules.min.js': [
+						'jquery.uvalidator.js',
+						'jquery.uvalidator.rules.js'
+					]
+				}
+			},
+			uvalidatorWRulesSkinUstreamMessages: {
+				files: {
+					'dist/jquery.uvalidator.rules.skin.ustream.messages.min.js': [
 						'jquery.uvalidator.js',
 						'jquery.uvalidator.rules.js',
 						'jquery.uvalidator.skin.js',
@@ -72,9 +80,9 @@ module.exports = function (grunt) {
 					]
 				}
 			},
-			uvalidatorWSkinUstream: {
+			uvalidatorWRulesSkinUstream: {
 				files: {
-					'dist/jquery.uvalidator.skin.ustream.min.js': [
+					'dist/jquery.uvalidator.rules.skin.ustream.min.js': [
 						'jquery.uvalidator.js',
 						'jquery.uvalidator.rules.js',
 						'jquery.uvalidator.skin.js',
