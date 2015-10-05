@@ -343,7 +343,7 @@ Checks if a field's value's format is a valid email. It uses regular expression 
 
 #### userpassword
 
-Tests if the field's value is matching with a predefined pattern. The predefined pattern requires that the password must be at least 7 characters length, must contain at leaset a lowercase alpha, a uppercase alpha and a numeric character.
+Tests if the field's value is matching with a predefined pattern. The predefined pattern requires that the password must be at least 5 characters length, must contain at leaset a lowercase alpha, a uppercase alpha and a numeric character.
 
 ##### selector
 
