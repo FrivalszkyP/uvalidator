@@ -125,10 +125,10 @@ SOFTWARE.
 					isValid: false
 				};
 
-				field.trigger('fieldInvalid', res);
+				field.trigger(events.FIELD_INVALID, res);
 				resultsStorage[key] = res;
 			});
-			this.form.trigger('formInvalid', {
+			this.form.trigger(events.FORM_INVALID, {
 				results: resultsStorage,
 				errors: resultsStorage
 			});
