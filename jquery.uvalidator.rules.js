@@ -33,7 +33,7 @@ SOFTWARE.
 	var patterns, dbg;
 
 	patterns = {
-        userpassword: /(?=.{5,})/,
+        userpassword: /(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.{5,})/,
 
 		// Shamelessly lifted from Scott Gonzalez via the Bassistance
 		// Validation plugin
