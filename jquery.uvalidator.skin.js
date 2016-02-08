@@ -22,7 +22,7 @@ SOFTWARE.
 
 /*jslint browser: true*/
 (function ($) {
-	"use strict";
+	'use strict';
 	var skins = {},
 		messages = {},
 		events = $.uvalidator.events,
@@ -37,16 +37,6 @@ SOFTWARE.
 	}
 
 	defaultProto = {
-		validatorEventMap: {
-			FIELD_VALID: 'onFieldValid',
-			FIELD_INVALID: 'onFieldInvalid',
-			FORM_VALID: 'onFormValid',
-			FORM_INVALID: 'onFormInvalid',
-			FINISH_FORM_VALIDATION: 'onFormValidationFinish',
-			START_FORM_VALIDATION: 'onFormValidationStart',
-			FINISH_FIELD_VALIDATION: 'onFieldValidationFinish',
-			START_FIELD_VALIDATION: 'onFieldValidationStart'
-		},
 		/**
 		 * @method setForm
 		 * @property {jQueryObject} form
@@ -54,28 +44,36 @@ SOFTWARE.
 		 * @chainable
 		 */
 		setForm: function (form, settings) {
-			var proxyTrigger = $.proxy(function (event) {
-				var args = $.makeArray(arguments).slice(1);
-				$(this).trigger(event, args);
-			}, this);
-
-			var formUvalidator;
-
+			var that = $(this);
 			this.form = form;
 			settings = settings || {};
-			formUvalidator = form.uvalidator(settings);
 
-			$.each(this.validatorEventMap, $.proxy(function (key, value) {
-				var eventName = events[key],
-					callback = this[value];
+			function proxyTrigger(event) {
+				var args = $.makeArray(arguments).slice(1);
+				that.trigger(event, args);
+			}
 
-				if (typeof callback === 'function') {
-					formUvalidator.on(eventName, $.proxy(callback, this));
-				}
+			form.uvalidator(settings)
+				.on(events.FORM_INVALID, $.proxy(this.onFormInvalid, this))
+				.on(events.FORM_VALID, $.proxy(this.onFormValid, this))
+				.on(events.FIELD_INVALID, $.proxy(this.onFieldInvalid, this))
+				.on(events.FIELD_VALID, $.proxy(this.onFieldValid, this))
+				.on(events.START_FIELD_VALIDATION, $.proxy(this.onFieldValidationStart, this))
+				.on(events.FINISH_FIELD_VALIDATION, $.proxy(this.onFieldValidationFinish, this))
+				.on(events.START_FORM_VALIDATION, $.proxy(this.onFormValidationStart, this))
+				.on(events.FINISH_FORM_VALIDATION, $.proxy(this.onFormValidationFinish, this))
 
-				formUvalidator.on(eventName, proxyTrigger);
-			}, this));
-			formUvalidator.on(events.FORM_VALID, $.proxy(this.resetResults, this));
+				.on(events.FORM_VALID, $.proxy(this.resetResults, this))
+
+				.on(events.FORM_VALID, proxyTrigger)
+				.on(events.FORM_INVALID, proxyTrigger)
+				.on(events.FIELD_INVALID, proxyTrigger)
+				.on(events.FIELD_VALID, proxyTrigger)
+				.on(events.START_FIELD_VALIDATION, proxyTrigger)
+				.on(events.FINISH_FIELD_VALIDATION, proxyTrigger)
+				.on(events.START_FORM_VALIDATION, proxyTrigger)
+				.on(events.FINISH_FORM_VALIDATION, proxyTrigger);
+
 			return this;
 		},
 		/**
