@@ -316,5 +316,17 @@ SOFTWARE.
 
 	$.uvalidator.addMethod('[minlength]', 'minlength', function(value, element, callback) {
 		callback(value.length >= element.attr('minlength'));
+
+	$.uvalidator.addMethod(
+		'.start-with-letter',
+		'startwithletter',
+		function (value, element, callback) {
+			var valid = true;
+
+			if (!/^[a-z]/i.test(value)) {
+				valid = false;
+			}
+			callback(valid);
+		});
 	});
 }(window.jQuery));
