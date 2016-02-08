@@ -128,7 +128,10 @@ SOFTWARE.
 				field.trigger('fieldInvalid', res);
 				resultsStorage[key] = res;
 			});
-			this.form.trigger('formInvalid');
+			this.form.trigger('formInvalid', {
+				results: resultsStorage,
+				errors: resultsStorage
+			});
 
 			this.results = resultsStorage;
 			return this;
