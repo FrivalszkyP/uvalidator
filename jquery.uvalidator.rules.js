@@ -118,6 +118,18 @@ SOFTWARE.
 		}
 	);
 
+	$.uvalidator.addGroupMethod(
+			':input.required:not(:radio,:checkbox)',
+			'input-group-required',
+			function (value, items, callback) {
+				var isValid = true;
+				items.each(function () {
+					isValid = isValid && $.trim($(this).val()) !== '';
+				});
+				callback(isValid);
+			}
+	);
+
 	$.uvalidator.addMethod(
 		'.number,[type="number"]',
 		'number',
