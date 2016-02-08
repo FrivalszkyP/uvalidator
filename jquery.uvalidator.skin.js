@@ -121,7 +121,7 @@ SOFTWARE.
 
 				res = {
 					field: field,
-					message: result.text,
+					message: result && result.text ? result.text : result,
 					isValid: false
 				};
 
