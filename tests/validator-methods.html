@@ -102,6 +102,12 @@
             <label for="pass2">Verify Password</label>
             <input type="password" name="pass2" value="" id="pass2" data-validator-refelem="#pass" class="password-verify" required />
         </div>
+        <div class="control-group">
+            <label for="minLength">minLength</label>
+            <input type="text" name="minLength" value="" id="minLength" minlength="3">
+            <label for="maxLength">maxLength</label>
+            <input type="text" name="maxLength" value="" id="maxLength" maxlength="3">
+        </div>
         <p><button type="submit" id="SubmitButton" class="btn">Submit</button></p>
     </form>
 </div>

@@ -51,7 +51,7 @@ module.exports = function (grunt) {
             ]
         },
         jslint: {
-            files: [
+            src: [
                 'jquery.uvalidator.js'
             ]
         },

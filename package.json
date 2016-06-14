@@ -2,6 +2,7 @@
   "name": "uvalidator",
   "description": "HTML Form validator jquery plugin",
   "version": "0.3.1",
+  "license": "MIT",
   "scripts": {
     "test": "node_modules/grover/bin/grover.js tests/*.html",
     "build-core": "$(npm bin)/uglifyjs jquery.uvalidator.js -c -m > dist/jquery.uvalidator.core.min.js",
@@ -17,12 +18,12 @@
     "url": "https://github.com/ustream/uvalidator"
   },
   "devDependencies": {
+    "color-marked": "^0.3.3",
     "grover": "^0.1.17",
-    "grunt": "~0.4.1",
-    "grunt-contrib-uglify": "^0.7.0",
-    "grunt-jslint": "~0.2.5",
-    "grunt-release": "^0.10.0",
-    "phantomjs": "^1.9.20",
-    "uglify-js": "^2.4.16"
+    "grunt": ">=0.4.0",
+    "grunt-contrib-uglify": "^1.0.1",
+    "grunt-jslint": "~1.1.14",
+    "grunt-release": "^0.14.0",
+    "phantomjs": "^1.9.20"
   }
 }
