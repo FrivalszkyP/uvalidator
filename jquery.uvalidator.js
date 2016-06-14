@@ -49,7 +49,6 @@
 			 */
 			submit: true
 		}
-
 	};
 	events = {
 		FIELD_VALID: 'fieldValid',
@@ -327,6 +326,12 @@
 		}
 
 		form.trigger(events.START_FORM_VALIDATION, form);
+
+		if (!fields.length && !groups.length) {
+			form.trigger(events.FIELD_VALID, {results: validationResults});
+			return;
+		}
+
 		fields.each(function () {
 			validateField(this, onValidate, false, form);
 		});

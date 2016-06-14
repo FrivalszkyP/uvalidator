@@ -109,9 +109,27 @@ yui.use('node', 'test', 'test-console', function (Y) {
         },
         tearDown: tearDown,
 		'minimum 5 chars length': function () {
-			pass.val('asdf').change();
+			pass.val('Asd1').change();
             Y.Assert.isTrue(pass.hasClass(invalidClass));
-			pass.val('asdfj').change();
+			pass.val('Asdf1').change();
+            Y.Assert.isTrue(pass.hasClass(validClass));
+        },
+		'require uppercase letter': function () {
+			pass.val('asdf1').change();
+            Y.Assert.isTrue(pass.hasClass(invalidClass));
+			pass.val('Asdf1').change();
+            Y.Assert.isTrue(pass.hasClass(validClass));
+        },
+		'require lowercase letter': function () {
+			pass.val('ASDF1').change();
+            Y.Assert.isTrue(pass.hasClass(invalidClass));
+			pass.val('aSDF1').change();
+            Y.Assert.isTrue(pass.hasClass(validClass));
+        },
+		'require number': function () {
+			pass.val('Asdaf').change();
+            Y.Assert.isTrue(pass.hasClass(invalidClass));
+			pass.val('Asdf1').change();
             Y.Assert.isTrue(pass.hasClass(validClass));
         }
     }));

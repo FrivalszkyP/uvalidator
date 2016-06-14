@@ -33,7 +33,7 @@ SOFTWARE.
 	var patterns, dbg;
 
 	patterns = {
-        userpassword: /(?=.{5,})/,
+        userpassword: /(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.{5,})/,
 
 		// Shamelessly lifted from Scott Gonzalez via the Bassistance
 		// Validation plugin
@@ -116,6 +116,18 @@ SOFTWARE.
 
 			callback(+(thisYear + thisMonth) <= +(yearVal + monthVal));
 		}
+	);
+
+	$.uvalidator.addGroupMethod(
+			':input.required:not(:radio,:checkbox)',
+			'input-group-required',
+			function (value, items, callback) {
+				var isValid = true;
+				items.each(function () {
+					isValid = isValid && $.trim($(this).val()) !== '';
+				});
+				callback(isValid);
+			}
 	);
 
 	$.uvalidator.addMethod(
@@ -304,6 +316,18 @@ SOFTWARE.
 
 	$.uvalidator.addMethod('[minlength]', 'minlength', function(value, element, callback) {
 		callback(value.length >= element.attr('minlength'));
+
+	$.uvalidator.addMethod(
+		'.start-with-letter',
+		'startwithletter',
+		function (value, element, callback) {
+			var valid = true;
+
+			if (!/^[a-z]/i.test(value)) {
+				valid = false;
+			}
+			callback(valid);
+		});
 	});
 
 	$.uvalidator.addMethod('[maxlength]', 'maxlength', function(value, element, callback) {
