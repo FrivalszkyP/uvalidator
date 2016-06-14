@@ -19,6 +19,8 @@ yui.use('node', 'test', 'test-console', function (Y) {
         minMax = $('#min-max'),
         minMaxTextarea = $('#min-max-textarea'),
         pattern = $('#pattern'),
+        minLength = $('#minLength'),
+        maxLength = $('#maxLength'),
         invalidClass = 'input-invalid',
         validClass = 'input-valid';
 
@@ -46,6 +48,8 @@ yui.use('node', 'test', 'test-console', function (Y) {
         minMax.val('');
         minMaxTextarea.val('');
         pattern.val('');
+        minLength.val('');
+        maxLength.val('');
     }
 
 	coreSuite = new Y.Test.Suite({
@@ -339,6 +343,23 @@ yui.use('node', 'test', 'test-console', function (Y) {
         "valid number in min-max-textrea": function () {
             minMaxTextarea.val(3).change();
             Y.Assert.isTrue(minMaxTextarea.hasClass(validClass));
+        },
+        "valid number in minLength-input": function () {
+            minLength.val(1234).change();
+            Y.Assert.isTrue(minLength.hasClass(validClass));
+        },
+        "valid number in maxLength-input": function () {
+            maxLength.val(12).change();
+            Y.Assert.isTrue(maxLength.hasClass(validClass));
+        },
+        "invalid number in minLength-input": function () {
+            minLength.val(12).change();
+            Y.Assert.isTrue(minLength.hasClass(invalidClass));
+        },
+        "invalid number in maxLength-input": function () {
+            maxLength.val(1234).change();
+            Y.Assert.isTrue(maxLength.hasClass(invalidClass));
+
         }
     }));
     coreSuite.add(new Y.Test.Case({

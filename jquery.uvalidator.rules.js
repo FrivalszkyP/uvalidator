@@ -314,9 +314,6 @@ SOFTWARE.
 		}
 	);
 
-	$.uvalidator.addMethod('[minlength]', 'minlength', function(value, element, callback) {
-		callback(value.length >= element.attr('minlength'));
-
 	$.uvalidator.addMethod(
 		'.start-with-letter',
 		'startwithletter',
@@ -328,5 +325,12 @@ SOFTWARE.
 			}
 			callback(valid);
 		});
+
+	$.uvalidator.addMethod('[minlength]', 'minlength', function(value, element, callback) {
+		callback(value.length >= element.attr('minlength'));
+	});
+
+	$.uvalidator.addMethod('[maxlength]', 'maxlength', function(value, element, callback) {
+		callback(value.length <= element.attr('maxlength'));
 	});
 }(window.jQuery));
