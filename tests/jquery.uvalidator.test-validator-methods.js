@@ -186,16 +186,43 @@ yui.use('node', 'test', 'test-console', function (Y) {
         },
         tearDown: tearDown,
         'invalid email formats': function () {
-            email.val('foo').change();
-            Y.Assert.isFalse(email.hasClass(validClass));
-            email.val('foo@').change();
-            Y.Assert.isFalse(email.hasClass(validClass));
-            email.val('foo@bar').change();
-            Y.Assert.isFalse(email.hasClass(validClass));
+			[
+				'foo',
+				'foo@',
+				'foo@bar',
+				'.foo@bar.com',
+				'foo@.bar.com',
+				'foo..foo@bar.com',
+				'Ffff foo@bar.com',
+				// tld > 63
+				'foo@bar.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+				// label after @ <= 63
+				'foo.oo@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.laat',
+				// label after another <= 63
+				'foo.oo@aa.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.lala'
+			].forEach(function (addr) {
+				email.val(addr).change();
+				Y.Assert.isFalse(email.hasClass(validClass), addr);
+			})
 		},
         'valid email format': function () {
-            email.val('foo@bar.baz').change();
-            Y.Assert.isTrue(email.hasClass(validClass));
+			[
+				'foo@bar.baz',
+				'foo@bar.baz.qux.asd',
+				'foo+qux@bar.baz',
+				'asdf@مثال.إختبار',
+				'asdf@例子.测试',
+				'asdf@例子.測試',
+				'asdf@παράδειγμα.δοκιμή',
+				'asdf@उदाहरण.परीक्षा',
+				'asdf@실례.테스트',
+				'foo@bar.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+				'foo@bar.aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aa',
+				'foo@aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.aa'
+			].forEach(function (addr) {
+				email.removeClass([validClass, invalidClass].join(' ')).val(addr).change();
+				Y.Assert.isTrue(email.hasClass(validClass), addr);
+			});
 		}
 	}));
 	coreSuite.add(new Y.Test.Case({
