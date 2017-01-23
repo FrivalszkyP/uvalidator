@@ -36,7 +36,7 @@ validator = $.uvalidatorApplySkin("base", form, {
     validationEvents: {
         change: true, // change event on fields
         submit: true // submit event of the form
-    }   
+    }
 });
 
 // catch the FORM_VALID event, which is fired after all validation ran on the
