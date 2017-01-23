@@ -18,10 +18,10 @@ Basic usage after you included the following files:
 
 ```html
 <form action="" method="" id="Form">
-<div class="control-group">
-<label for="RequireField">A required field</label>
-<input type="text" name="" value="" id="RequireField" required />
-</div>
+    <div class="control-group">
+        <label for="RequireField">A required field</label>
+        <input type="text" name="" value="" id="RequireField" required />
+    </div>
 </form>
 ```
 
@@ -32,18 +32,18 @@ form = $("#Form");
 events = $.uvalidator.events;
 
 validator = $.uvalidatorApplySkin("base", form, {
-		// validation events when should validate
-validationEvents: {
-change: true, // change event on fields
-submit: true // submit event of the form
-}
+    // validation events when should validate
+    validationEvents: {
+        change: true, // change event on fields
+        submit: true // submit event of the form
+    }   
 });
 
 // catch the FORM_VALID event, which is fired after all validation ran on the
 // form and all returned that the fields are valid.
 validator.on(events.FORM_VALID, function () {
-		form[0].submit();
-		});
+    form[0].submit();
+});
 ```
 
 Here you are applying the "base" skin on form which has the id 'Form'. When it comes out that the form is valid, the form is going to be submitted. If any field is invalid a a label will be appended after the input field with the error message.
@@ -51,21 +51,21 @@ Here you are applying the "base" skin on form which has the id 'Form'. When it c
 If you don't want to use any skin, just call the `uvalidator` method on the form's jquery object.
 
 ```javascript
-var form, events, validator;
+var form, events;
 
 form = $("#Form");
 events = $.uvalidator.events;
 
 form.uvalidator({
-validationEvents: {
-change: true,
-submit: true
-}
+    validationEvents: {
+        change: true,
+        submit: true
+    }
 });
 
 form.on(events.FORM_VALID, function () {
-		form[0].submit();
-		});
+    form[0].submit();
+});
 ```
 
 It does the same like the one above, but it won't show any error message, because here we didn't use any skin.
@@ -73,12 +73,12 @@ It does the same like the one above, but it won't show any error message, becaus
 ### Available options
 
 + validationEvents `Object`
-- focusout `Boolean`, default: `false`
-- focusin `Boolean`, default: `false`
-- change `Boolean`, default: `true`
-- keyup `Boolean`, default: `true`
-- click `Boolean`, default: `false`
-- submit `Boolean`, default: `true`
+    - focusout `Boolean`, default: `false`
+    - focusin `Boolean`, default: `false`
+    - change `Boolean`, default: `true`
+    - keyup `Boolean`, default: `true`
+    - click `Boolean`, default: `false`
+    - submit `Boolean`, default: `true`
 
 ## How it works
 
@@ -115,8 +115,8 @@ It runs right before the field validation starts. Useful for example when you us
 
 ```javascript
 validator.on($.uvalidator.events.START_FIELD_VALIDATION, function (event, field) {
-		$(field).addClass('loading');
-		});
+    $(field).addClass('loading');
+});
 ```
 
 ### FINISH_FIELD_VALIDATION
@@ -128,8 +128,8 @@ It runs right after all of the validation methods ran on the field (ajax validat
 
 ```javascript
 validator.on($.uvalidator.events.FINISH_FIELD_VALIDATION, function (event, field) {
-		$(field).removeClass('loading');
-		});
+    $(field).removeClass('loading');
+});
 ```
 
 ### START_FORM_VALIDATION
@@ -143,8 +143,8 @@ Runs right before a full form validation starts.
 
 ```javascript
 validator.on($.uvalidator.events.START_FORM_VALIDATION, function (event, form) {
-		$(form).addClass('loading');
-		});
+    $(form).addClass('loading');
+});
 ```
 
 ### FINISH_FORM_VALIDATION
@@ -158,8 +158,8 @@ Called right after all field has been validated in the form (including ajax call
 
 ```javascript
 validator.on($.uvalidator.events.FINISH_FORM_VALIDATION, function (event, form) {
-		$(form).removeClass('loading');
-		});
+    $(form).removeClass('loading');
+});
 ```
 
 ### FIELD_VALID
@@ -168,24 +168,24 @@ callback arguments:
 
 + event 'jQueryEventObject` Standard jquery event object
 + result Object
-- field `jQueryObject` The field, which has been validated
-- isGroup `Boolean` True, if the field belongs to a group, so only groupValidation methods were running
-- isValid `Boolean` True, if the field is valid
-- validator `String` Name of the validator which has been called last time. (Mostly useful in invalid callback, but for the consistency it passed here too).
+    - field `jQueryObject` The field, which has been validated
+    - isGroup `Boolean` True, if the field belongs to a group, so only groupValidation methods were running
+    - isValid `Boolean` True, if the field is valid
+    - validator `String` Name of the validator which has been called last time. (Mostly useful in invalid callback, but for the consistency it passed here too).
 
 Called when all validation ran for a field and all validation passed. For example using that event you can mark that the field is valid.
 
 ```javascript
 validator.on($.uvalidator.events.FINISH_FORM_VALIDATION, function (event, result) {
-		$(form).removeClass('loading');
-		});
+    $(form).removeClass('loading');
+});
 ```
 When all validation ran for the field and all found out that the field is valid, the FIELD_VALID event will be triggered. You can use this event for example to mark if a field is valid adding a class to it.
 
 ```javascript
 validator.on($.uvalidator.events.FIELD_VALID, function (event, result) {
-		result.field.addClass('valid');
-		});
+    result.field.addClass('valid');
+});
 ```
 
 ### FIELD_INVALID
@@ -194,16 +194,16 @@ callback arguments:
 
 + event 'jQueryEventObject` Standard jquery event object
 + result Object
-- field `jQueryObject` The field, which has been validated
-- isGroup `Boolean` True, if the field belongs to a group, so only groupValidation methods were running
-- isValid `Boolean` True, if the field is valid
-- validator `String` Name of the validator which has been called last time. Pretty useful if field is invalid, because you use this name to display a proper error message.
+    - field `jQueryObject` The field, which has been validated
+    - isGroup `Boolean` True, if the field belongs to a group, so only groupValidation methods were running
+    - isValid `Boolean` True, if the field is valid
+    - validator `String` Name of the validator which has been called last time. Pretty useful if field is invalid, because you use this name to display a proper error message.
 
 When one of the validators of the field founds that something is wrong with the value of the field, the FIELD_INVALID event will be triggered.
 ```javascript
 validator.on($.uvalidator.events.FIELD_INVALID, function (event, result) {
-		result.field.addClass('invalid');
-		});
+    result.field.addClass('invalid');
+});
 ```
 ### FORM_VALID
 
@@ -211,7 +211,7 @@ callback arguments:
 
 + event 'jQueryEventObject` Standard jquery event object
 + validationResults 
-- results `Array` Result object array, see FIELD_VALID event for result object structure.
+    - results `Array` Result object array, see FIELD_VALID event for result object structure.
 
 The event triggered when all validator of all fields ran and all field is valid.
 
@@ -221,10 +221,10 @@ callback arguments:
 
 + event 'jQueryEventObject` Standard jquery event object
 + result Object
-- field `jQueryObject` The field, which has been validated
-- isGroup `Boolean` True, if the field belongs to a group, so only groupValidation methods were running
-- isValid `Boolean` True, if the field is valid
-- validator `String` Name of the validator which has been called last time. Pretty useful if field is invalid, because you use this name to display a proper error message.
+    - field `jQueryObject` The field, which has been validated
+    - isGroup `Boolean` True, if the field belongs to a group, so only groupValidation methods were running
+    - isValid `Boolean` True, if the field is valid
+    - validator `String` Name of the validator which has been called last time. Pretty useful if field is invalid, because you use this name to display a proper error message.
 
 The event triggered when all validator of all fields ran and at lease one field was invalid.
 
@@ -241,7 +241,8 @@ To define a validator group you must use the `data-validator-group` attribute. A
 ```html
 <input type="text" name="groupItem1" value="" data-validator-group="group1" />
 <input type="text" name="groupItem2" value="" data-validator-group="group1" />
-
+```
+```html
 <input type="text" name="groupItem3" value="" data-validator-group="group2" />
 <input type="text" name="groupItem4" value="" data-validator-group="group2" />
 ```
@@ -255,91 +256,91 @@ For example, if you want to make sure that the field will be filled, you must us
 
 Example using a class:
 
-	```html
-	<input type="text" name="aName" value="" class="required" />
-	```
+```html
+<input type="text" name="aName" value="" class="required" />
+```
 
-	Example using attribute:
-	```html
-	<input type="text" name="aName" value="" required />
-	```
+Example using attribute:
+```html
+<input type="text" name="aName" value="" required />
+```
 
 ### Predefined validator methods
 
 #### required
 
-	Checks if a field's value isn't empty. If the field is a checkbox, it will check if it's checked or not.
-	For radio fields see required group method
+Checks if a field's value isn't empty. If the field is a checkbox, it will check if it's checked or not.
+For radio fields see required group method
 
 ##### selector
 
-	`[required],.required`
+`[required],.required`
 
 ##### examples
 
-	```html
-	<input type="text" name="aName" value="" required />
-	<input type="checkbox" name="aName" value="" required />
-	```
+```html
+<input type="text" name="aName" value="" required />
+<input type="checkbox" name="aName" value="" required />
+```
 
-	```html
-	<input type="text" name="aName" value="" class="required" />
-	<input type="checkbox" name="aName" value="" class="required" />
-	```
+```html
+<input type="text" name="aName" value="" class="required" />
+<input type="checkbox" name="aName" value="" class="required" />
+```
 
 #### number
 
-	Checks if a field's value is a number or not. If the required validator rule not set, it can be empty.
+Checks if a field's value is a number or not. If the required validator rule not set, it can be empty.
 
 ##### selector
 
-	`.number,[type="number"]`
+`.number,[type="number"]`
 
 ##### examples
 
-	```html
-	<input type="number" name="aName" value="" />
-	```
+```html
+<input type="number" name="aName" value="" />
+```
 
-	```html
-	<input type="text" name="aName" value="" class="number"/>
-	```
+```html
+<input type="text" name="aName" value="" class="number"/>
+```
 
 #### url
 
-	Checks if a field's value's format is a valid url. It uses regular expression to check the format. If the required validator rule not set, it can be empty.
+Checks if a field's value's format is a valid url. It uses regular expression to check the format. If the required validator rule not set, it can be empty.
 
 ##### selector
 
-	`.input-url,[type="url"]`
+`.input-url,[type="url"]`
 
 ##### examples
 
-	```html
-	<input type="url" name="aName" value="" />
-	```
+```html
+<input type="url" name="aName" value="" />
+```
 
-	```html
-	<input type="text" name="aName" value="" class="url"/>
-	```
+```html
+<input type="text" name="aName" value="" class="url"/>
+```
 
 #### email
 
-	Checks if a field's value's format is a valid email. It uses regular expression to check the format. If the required validator rule not set, it can be empty.
+Checks if a field's value's format is a valid email. It uses regular expression to check the format. If the required validator rule not set, it can be empty.
 
 ##### selector
 
-	`.input-email,[type="email"]`
+`.input-email,[type="email"]`
 
 ##### examples
 
-	```html
-	<input type="email" name="aName" value="" />
-	```
+```html
+<input type="email" name="aName" value="" />
+```
 
-	```html
-	<input type="text" name="aName" value="" class="email"/>
-	```
+```html
+<input type="text" name="aName" value="" class="email"/>
+```
 
 #### userpassword
 
