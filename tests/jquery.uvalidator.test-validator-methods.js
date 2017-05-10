@@ -27,10 +27,12 @@ yui.use('node', 'test', 'test-console', function (Y) {
     Y.Assert.uFieldIsInvallid = function uFieldIsVallid(field) {
         Y.Assert.isTrue(field.hasClass(invalidClass), 'uField is invalid');
         Y.Assert.isFalse(field.hasClass(validClass), 'uField is invalid');
+        Y.Assert.isTrue(field.attr('aria-invalid'), 'uField is invalid');
     };
     Y.Assert.uFieldIsVallid = function uFieldIsVallid(field) {
         Y.Assert.isTrue(field.hasClass(validClass), 'uField is valid');
         Y.Assert.isFalse(field.hasClass(invalidClass), 'uField is valid');
+	    Y.Assert.isFalse(field.attr('aria-invalid'), 'uField is valid');
     };
     function tearDown() {
         // $(':input').removeClass('valid invalid');

@@ -25,28 +25,34 @@ SOFTWARE.
 	"use strict";
 	$.uvalidatorSkin('base', {
 		setFieldInvalid: function (field, args) {
-			$(field).addClass('invalid').removeClass('valid')
+			$(field).addClass('invalid').removeClass('valid').attr('aria-invalid', 'true')
 				.closest('.control-group').addClass('error').removeClass('success');
 		},
 		setFieldValid: function (field, args) {
-			$(field).addClass('valid').removeClass('invalid')
+			$(field).addClass('valid').removeClass('invalid').attr('aria-invalid', 'false')
 				.closest('.control-group').addClass('success').removeClass('error');
 		},
 		showFieldError: function (field, args) {
 			var msg = this.getMessage(args),
 				container,
-				errorElem;
+				errorID = 'error-' + field.attr('id') + '-' + Math.ceil(Math.random() * 10000);
 
 			field = $(field);
 			container = field.closest('.control-group');
 			container.find('.uerror').remove();
+
 			$('<label />')
-				.attr('for', field.attr('id'))
+				.attr({
+					'for': field.attr('id'),
+					'id': errorID
+				})
 				.addClass('uerror')
 				.html(msg).appendTo(container);
+
+			field.attr('aria-describedBy', errorID);
 		},
 		hideFieldError: function (field, args) {
-			$(field).closest('.control-group').find('.uerror').remove();
+			$(field).removeAttr('aria-describedBy').closest('.control-group').find('.uerror').remove();
 		}
 	});
 }(window.jQuery));
