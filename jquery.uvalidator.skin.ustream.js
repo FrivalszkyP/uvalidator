@@ -18,7 +18,8 @@
 			focusOnFormInvalid: true,
 			inputInvalidClassName: 'input-invalid',
 			inputValidClassName: 'input-valid',
-			errorMessageClassName: 'tooltip-error'
+			errorMessageClassName: 'tooltip-error',
+			errorIDprefix: 'error-'
 		},
 		setForm: function (form, settings) {
 			this.superclass.setForm(form, settings);
@@ -51,12 +52,14 @@
 			var options = this.options;
 				field = getCorrectField(field);
 
-			field.addClass(options.inputInvalidClassName).removeClass(options.inputValidClassName);
+			field.addClass(options.inputInvalidClassName).removeClass(options.inputValidClassName)
+					.attr('aria-invalid', 'true');
 		},
 		setFieldValid: function (field, args) {
 			var options = this.options;
 			field = getCorrectField(field);
-			field.addClass(options.inputValidClassName).removeClass(options.inputInvalidClassName);
+			field.addClass(options.inputValidClassName).removeClass(options.inputInvalidClassName)
+					.attr('aria-invalid', 'false');
 		},
 		unsetValidatorState: function (field, args) {
 			var options = this.options;
@@ -70,7 +73,8 @@
 				selectGroup,
 				container,
 				fieldOrGroup,
-				errorElem;
+				errorElem,
+				errorID;
 
 			fieldOrGroup = args.field;
 			container = fieldOrGroup.closest('.control-group');
@@ -83,9 +87,12 @@
 			errorElem = container.find('.' + options.errorMessageClassName);
 
 			if (errorElem.length < 1) {
+				errorID = options.errorIDprefix + fieldOrGroup.attr('id') + '-' + Math.ceil(Math.random() * 10000);
 				errorElem = $('<span />')
 						// .attr('for', fieldOrGroup.attr('id'))
-						.addClass(options.errorMessageClassName);
+						.addClass(options.errorMessageClassName)
+						.attr('id', errorID);
+				fieldOrGroup.attr('aria-describedBy', errorID);
 
 				if (fieldOrGroup[0].nodeName === 'SELECT') {
 					fieldOrGroup.next('span.select').after(errorElem);
@@ -104,7 +111,7 @@
 			this.addFieldError(field, args);
 		},
 		hideFieldError: function (field, args) {
-			$(field).closest('.control-group').find('.' + this.options.errorMessageClassName).remove();
+			$(field).removeAttr('aria-describedBy').closest('.control-group').find('.' + this.options.errorMessageClassName).remove();
 		},
 		onFormInvalid: function () {
 			if (this.options.focusOnFormInvalid) {
