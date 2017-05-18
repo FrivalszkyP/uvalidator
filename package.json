@@ -1,7 +1,7 @@
 {
   "name": "uvalidator",
   "description": "HTML Form validator jquery plugin",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "license": "MIT",
   "scripts": {
     "test": "node_modules/grover/bin/grover.js tests/*.html",
