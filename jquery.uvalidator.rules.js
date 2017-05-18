@@ -59,9 +59,6 @@ SOFTWARE.
 	}
 
 	$.uvalidator.addMethod('.required,[required]', 'required', function (value, element, callback) {
-		if (!element.attr('aria-required')) {
-			element.attr('aria-required', 'true');
-		}
 		callback(!!value);
 	});
 	$.uvalidator.addMethod('.ajax', 'ajax', function (value, element, callback) {
@@ -105,8 +102,7 @@ SOFTWARE.
 				monthVal = zeroPad(month.val(), 2),
 				now = new Date(),
 				thisYear,
-				thisMonth,
-				isValid;
+				thisMonth;
 
 			thisYear = String(now.getFullYear());
 			thisMonth = zeroPad(now.getMonth() + 1, 2);
