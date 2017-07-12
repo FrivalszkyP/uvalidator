@@ -33,7 +33,7 @@ SOFTWARE.
 	var patterns, dbg;
 
 	patterns = {
-		userpassword: /(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.{5,})/,
+		userpassword: /(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.{7,})/,
 
 		// https://html.spec.whatwg.org/multipage/forms.html#e-mail-state-(type=email)
 		email: /^(?!\.)(?!.*\.{2})[a-z0-9á-ÿ\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF.!#$%&'*+\/=?^_`{|}~-]+@(?!\.)(?:[a-z0-9á-ÿ\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF-]{1,63})(?:\.(?:[a-z0-9á-ÿ\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF-]{1,63}))*\.[a-z0-9á-ÿ\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]{2,63}$/i,
