@@ -131,7 +131,7 @@ yui.use('node', 'test', 'test-console', function (Y) {
 				Y.Assert.areSame(1, field1Error.length, 'Error label not found');
 				Y.Assert.areSame('Look! This field is invalid', field1Error.text());
 				radioError = $(controlGroups[1]).find('.' + errorLabelClass);
-				Y.Assert.areSame(2, radioError.length, 'Error label not found');
+				Y.Assert.areSame(2, radioError.length, 'Error label for radio not found');
 			}, 100);
 		},
 		'Test if field1 valid on server too': function () {
