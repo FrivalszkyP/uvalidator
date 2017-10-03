@@ -29,7 +29,7 @@ SOFTWARE.
 		[
 			'userpassword',
 			'Password must contain at least 7 characters including at' +
-	' least 1 capitalized letter AND at least 1 number.'],
+			' least 1 capitalized letter AND at least 1 number.'],
 		['passwordverify', 'Password must be the same as above.'],
 		['creditcard', 'Invalid credit card number.'],
 		['url', 'Please type a valid url.'],
@@ -42,9 +42,12 @@ SOFTWARE.
 			var maxVal = args.field.attr('data-validation-max') || args.field.attr('max');
 			return 'The maximum value is ' + maxVal + '.';
 		}],
+		['tel', 'Invalid telephone number.'],
 		['uniquemail', 'Email already in use'],
 		['freeusername', 'Username already taken'],
 		['cvv', 'Invalid cvv number'],
-		['pattern', 'Invalid format.']
+		['pattern', 'Invalid format.'],
+		['maxfilesize', 'Attached file(s) are too large.'],
+		['acceptfiles', 'Invalid file(s) selected']
 	]);
 }(window.jQuery));

@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*jslint browser: true, white: true*/
 (function ($) {
 	'use strict';
@@ -419,3 +420,4 @@
 	};
 	$.fn.uvalidator = UValidator;
 }(window.jQuery));
+/* eslint-enable */

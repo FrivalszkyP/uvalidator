@@ -27,12 +27,12 @@ yui.use('node', 'test', 'test-console', function (Y) {
     Y.Assert.uFieldIsInvallid = function uFieldIsVallid(field) {
         Y.Assert.isTrue(field.hasClass(invalidClass), 'uField is invalid');
         Y.Assert.isFalse(field.hasClass(validClass), 'uField is invalid');
-        Y.Assert.isTrue(field.attr('aria-invalid'), 'uField is invalid');
+        Y.Assert.areSame('true', field.attr('aria-invalid'), 'uField is invalid');
     };
     Y.Assert.uFieldIsVallid = function uFieldIsVallid(field) {
         Y.Assert.isTrue(field.hasClass(validClass), 'uField is valid');
         Y.Assert.isFalse(field.hasClass(invalidClass), 'uField is valid');
-	    Y.Assert.isFalse(field.attr('aria-invalid'), 'uField is valid');
+	    Y.Assert.areSame('false', field.attr('aria-invalid'), 'uField is valid');
     };
     function tearDown() {
         // $(':input').removeClass('valid invalid');
@@ -117,25 +117,25 @@ yui.use('node', 'test', 'test-console', function (Y) {
 		'minimum 5 chars length': function () {
 			pass.val('Asd1').change();
             Y.Assert.isTrue(pass.hasClass(invalidClass));
-			pass.val('Asdf1').change();
+			pass.val('Asdf1Asdf1').change();
             Y.Assert.isTrue(pass.hasClass(validClass));
         },
 		'require uppercase letter': function () {
 			pass.val('asdf1').change();
             Y.Assert.isTrue(pass.hasClass(invalidClass));
-			pass.val('Asdf1').change();
+			pass.val('Asdf1asdf1').change();
             Y.Assert.isTrue(pass.hasClass(validClass));
         },
 		'require lowercase letter': function () {
 			pass.val('ASDF1').change();
             Y.Assert.isTrue(pass.hasClass(invalidClass));
-			pass.val('aSDF1').change();
+			pass.val('aSDF1ASDF1').change();
             Y.Assert.isTrue(pass.hasClass(validClass));
         },
 		'require number': function () {
 			pass.val('Asdaf').change();
             Y.Assert.isTrue(pass.hasClass(invalidClass));
-			pass.val('Asdf1').change();
+			pass.val('AsdfAsdf1').change();
             Y.Assert.isTrue(pass.hasClass(validClass));
         }
     }));

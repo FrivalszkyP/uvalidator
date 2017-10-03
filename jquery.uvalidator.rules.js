@@ -21,8 +21,10 @@ SOFTWARE.
 */
 
 /*jslint browser: true */
+/* eslint-disable */
 (function ($) {
 	"use strict";
+
 	function zeroPad(n, count) {
 		n = String(n);
 		while (n.length < count) {
@@ -82,6 +84,22 @@ SOFTWARE.
 		}
 	);
 	$.uvalidator.addGroupMethod(
+		':input[data-validator-type="pattern"]',
+		'pattern',
+		function (value, items, callback) {
+			var isValid = true;
+			items.each(function (index, element) {
+				var $el = $(element);
+				var value = $el.val();
+				var pattern = $el.attr('data-validator-pattern') || $el.attr('pattern');
+				var subtype = $el.attr('data-validator-subtype');
+				var regex = pattern ? new RegExp(pattern) : patterns[subtype];
+				isValid = isValid && (isOptional($el, value) || regex.test(value));
+			});
+			callback(isValid);
+		}
+	);
+	$.uvalidator.addGroupMethod(
 		':input[data-validator-type="date"][required],:input[data-validator-type="date"].required',
 		'required-date',
 		function (value, items, callback) {
@@ -116,15 +134,15 @@ SOFTWARE.
 	);
 
 	$.uvalidator.addGroupMethod(
-			':input.required:not(:radio,:checkbox)',
-			'input-group-required',
-			function (value, items, callback) {
-				var isValid = true;
-				items.each(function () {
-					isValid = isValid && $.trim($(this).val()) !== '';
-				});
-				callback(isValid);
-			}
+		':input.required:not(:radio,:checkbox)',
+		'input-group-required',
+		function (value, items, callback) {
+			var isValid = true;
+			items.each(function () {
+				isValid = isValid && $.trim($(this).val()) !== '';
+			});
+			callback(isValid);
+		}
 	);
 
 	$.uvalidator.addMethod(
@@ -132,7 +150,7 @@ SOFTWARE.
 		'number',
 		function (value, element, callback) {
 			var valid = isOptional(element, value) ||
-					(!isNaN(+value) && !isNaN(parseInt(value, 10)));
+				(!isNaN(+value) && !isNaN(parseInt(value, 10)));
 			callback(valid);
 		}
 	);
@@ -321,7 +339,8 @@ SOFTWARE.
 				valid = false;
 			}
 			callback(valid);
-		});
+		}
+	);
 
 	$.uvalidator.addMethod('[minlength]', 'minlength', function(value, element, callback) {
 		callback(value.length >= element.attr('minlength'));
@@ -330,4 +349,38 @@ SOFTWARE.
 	$.uvalidator.addMethod('[maxlength]', 'maxlength', function(value, element, callback) {
 		callback(value.length <= element.attr('maxlength'));
 	});
+
+	$.uvalidator.addMethod('[maxfilesize]', 'maxfilesize', function(value, element, callback) {
+		if (!element[0].files) return;
+
+		var fileLength = element[0].files.length;
+		var i = 0;
+		var valid = true;
+
+		for (; i < fileLength ; i++) {
+			if (valid) {
+				valid = element[0].files[i].size < parseInt(element.attr('maxfilesize'), 10);
+			}
+		}
+
+		callback(valid);
+	});
+
+	$.uvalidator.addMethod('[accept]', 'acceptfiles', function(value, element, callback) {
+		if (!element[0].files) return;
+
+		var fileLength = element[0].files.length;
+		var i = 0;
+		var valid = true;
+		var acceptList = element.attr('accept') || [];
+
+		for (; i < fileLength ; i++) {
+			if (valid) {
+				valid = acceptList.indexOf(element[0].files[i].type) > -1;
+			}
+		}
+
+		callback(valid);
+	});
+
 }(window.jQuery));
