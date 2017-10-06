@@ -330,6 +330,7 @@
 
 		if (!fields.length && !groups.length) {
 			form.trigger(events.FIELD_VALID, {results: validationResults});
+			form.trigger(events.FORM_VALID, {results: validationResults});
 			return;
 		}
 
