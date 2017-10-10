@@ -47,7 +47,7 @@ SOFTWARE.
 		/**
 		 * Any type of URL like chrome://bookmarks or content://com.example.project:200/folder/subfolder/etc
 		 */
-		anyurl: /^[^:/?#]+:\/\/[^?#]*(\?[^#]*)?(#(.*))?$/,
+		anyurl: /^[a-z][^:/?#]*:\/\/[^?#]*(\?[^#]*)?(#(.*))?$/,
 
 		// Number, including positive, negative, and floating decimal.
 		// Credit: bassistance
