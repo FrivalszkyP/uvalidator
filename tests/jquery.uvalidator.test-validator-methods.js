@@ -10,7 +10,7 @@ yui.use('node', 'test', 'test-console', function (Y) {
 		pass = $('#pass'),
 		pass2 = $('#pass2'),
 		url = $('#url'),
-		anyurl = $('#any-url'),
+		uri = $('#uri'),
 		email = $('#email'),
 		creditcard = $('#creditcard'),
 		min = $('#min'),
@@ -42,7 +42,7 @@ yui.use('node', 'test', 'test-console', function (Y) {
 		pass.val('');
 		pass2.val('');
 		url.val('');
-		anyurl.val('');
+		uri.val('');
 		email.val('');
 		creditcard.val('');
 		min.val('');
@@ -182,24 +182,24 @@ yui.use('node', 'test', 'test-console', function (Y) {
 		}
 	}));
 	coreSuite.add(new Y.Test.Case({
-		name: 'Url format tests with any scheme',
+		name: 'URI format tests with different schemes',
 		setUp: function () {
 			$('#Messages').hide();
-			anyurl.val('');
+			uri.val('');
 			$('form').submit();
 		},
 		tearDown: tearDown,
 		'without scheme': function () {
-			anyurl.val('www.ustream.tv').change();
-			Y.Assert.isFalse(anyurl.hasClass(validClass));
+			uri.val('www.ustream.tv').change();
+			Y.Assert.isFalse(uri.hasClass(validClass));
 		},
 		'valid scheme': function () {
-			anyurl.val('chrome://bookmarks').change();
-			Y.Assert.isTrue(anyurl.hasClass(validClass));
+			uri.val('chrome://bookmarks').change();
+			Y.Assert.isTrue(uri.hasClass(validClass));
 		},
 		'valid android intent': function () {
-			anyurl.val('content://com.example.project:200/folder/subfolder/etc').change();
-			Y.Assert.isTrue(anyurl.hasClass(validClass));
+			uri.val('content://com.example.project:200/folder/subfolder/etc').change();
+			Y.Assert.isTrue(uri.hasClass(validClass));
 		}
 	}));
 	coreSuite.add(new Y.Test.Case({
