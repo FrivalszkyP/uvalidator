@@ -133,7 +133,10 @@
 			this.addFieldError(field, args);
 		},
 		hideFieldError: function (field, args) {
-			$(field).removeAttr('aria-describedBy').closest(this.options.inputContainerSelector).find('.' + this.options.errorMessageClassName).remove();
+			var container = $(field).removeAttr('aria-describedBy').closest(this.options.inputContainerSelector);
+			if (!container.find('.' + this.options.inputInvalidClassName).length) {
+				container.find('.' + this.options.errorMessageClassName).remove();
+			}
 		},
 		/**
 		 * Focuses on the first input / select element that is invalid
