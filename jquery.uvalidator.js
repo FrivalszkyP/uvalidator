@@ -271,7 +271,7 @@
 	function validateForm(form) {
 		var validationResults, isFormValid, fields, groupFields, groups, groupsLen;
 
-		fields = form.find(':input').not('.skip-validation,:disabled');
+		fields = form.find(':input').not('.skip-validation,:disabled,:hidden');
 
 		groupFields = fields.filter('[data-validator-group]');
 
